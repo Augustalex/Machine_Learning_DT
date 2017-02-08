@@ -3,6 +3,9 @@ import pandas
 import scipy
 import sklearn.model_selection
 from specialNode import Node
+import matplotlib.pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
+import numpy as np
 
 df = pandas.read_csv(r"C:\Users\August\Documents\ILS Projekt\ILS Projekt Dataset\csv_binary\binary\labor.csv",
                      header=None)
@@ -10,14 +13,36 @@ df = pandas.read_csv(r"C:\Users\August\Documents\ILS Projekt\ILS Projekt Dataset
 # print(df[:2])
 
 arr = pandas.np.array(df)
-X = arr[1:, :-1]
-y = arr[1:, -1:]
+X_arr = arr[1:, :-1]
+y_arr = arr[1:, -1:]
+
+X_arr.astype(np.float)
 
 # Bosco Talkshow
 # Training set, test set, train klass label, test klass label. We split
 # into sets
-X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.33, random_state=42)
+X, X_test, y, y_test = sklearn.model_selection\
+    .train_test_split(X_arr, y_arr, test_size=0.33, random_state=42)
 
+bdt = DecisionTreeClassifier(max_depth=10)
+bdt.fit(X, y)
+
+Z = bdt.predict(scipy.ndarray.astype(X_test, dtype=scipy.float32), False)
+print(Z)
+
+i = 0
+end = len(Z)
+correct = 0
+error = 0
+while i < end:
+    if y_test[i] == Z[i]:
+        correct += 1
+    else:
+        error += 1
+
+    i += 1
+
+print("Percentile:", correct/end)
 """
 node = Node(X_train)
 result = node.split(
@@ -44,9 +69,3 @@ def multi_way_test(subject):
         return "C"
     else:
         return "D"
-
-node1 = Node(X_train)
-result1 = node1.split(multi_way_test)
-
-for x in result1:
-    print([row[0] for row in x.subjects])
