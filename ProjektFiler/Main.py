@@ -1,4 +1,4 @@
-import sys
+"""import sys
 import pandas
 import scipy
 import sklearn.model_selection
@@ -43,7 +43,7 @@ while i < end:
     i += 1
 
 print("Percentile:", correct/end)
-"""
+
 node = Node(X_train)
 result = node.split(
     lambda subject:
@@ -55,7 +55,7 @@ for x in result:
 
 print("", "")
 
-"""
+
 
 def binary_test(subject):
     return int(subject[0]) < 2
@@ -69,3 +69,4 @@ def multi_way_test(subject):
         return "C"
     else:
         return "D"
+"""

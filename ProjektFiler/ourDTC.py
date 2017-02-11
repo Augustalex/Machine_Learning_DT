@@ -2,15 +2,13 @@ from collections import defaultdict
 
 import pandas
 import sklearn.model_selection
+from sklearn.tree import DecisionTreeClassifier
 
-from specialNode import Node, split
+from ProjektFiler.gini_index import generate_best_split, generate_class_frequency_map
+from specialNode import Node, split, Subject
 import numpy as np
 
 
-class Subject:
-    def __init__(self, features, class_label):
-        self.class_label = class_label
-        self.features = features
 
 
 def new_mean_value_test(subjects, featureIndex):
@@ -24,24 +22,6 @@ def new_mean_value_test(subjects, featureIndex):
         return subject.features[featureIndex] < mean
 
     return test
-
-def new_gini_test(subjects, feature_index):
-    #children = split(subject, )
-
-    class_frequency = defaultdict(int)
-
-    for subject in subjects:
-        class_frequency[subject.class_label] += 1
-
-    n_classes = len(subjects)
-    gini_index = 1
-    for class_key in class_frequency.keys():
-        gini_index -= (class_frequency[class_key] / n_classes) ** 2
-
-
-def child_gini_index(child, subjects):
-
-    
 
 
 def start_hunts(data_features, data_class_labels):
@@ -66,7 +46,8 @@ def hunts(parent_node, subjects, feature_index):
         parent_node.split_test = test
 
         # Splits the node with the new feature test
-        split_nodes = split(subjects, test)
+        split_nodes = generate_best_split(parent_node, subjects, feature_index)
+        #split_nodes = split(subjects, test)
         if len(split_nodes) <= 1:
             hunts(parent_node, subjects, feature_index + 1)
         else:
@@ -84,7 +65,7 @@ def most_common_class_label(subjects):
 
 
 def group_has_same_label(subjects):
-    first_label = subjects[0]
+    first_label = subjects[0].class_label
     for subject in subjects:
         if subject.class_label != first_label:
             # if the subjects class label is not the same as the first label
@@ -117,10 +98,16 @@ X_test = [[float(n) for n in row] for row in X_test]
 
 
 def test_hunts():
+    their_model = DecisionTreeClassifier()
+    their_model.fit(X, y)
+
     model = start_hunts(X, y)
 
     y_test_predict = predict(model, X_test)
     compare_results(y_test_predict, y_test)
+
+    y_their_predict = their_model.predict(X_test)
+    compare_results(y_their_predict, y_test)
 
 
 def compare_results(prediction, correct_result):
@@ -130,7 +117,7 @@ def compare_results(prediction, correct_result):
             correct += 1
 
     percentage = correct / len(prediction)
-    print("Correct to " + str(percentage*100) + "%")
+    print("Correct to " + str(percentage * 100) + "%")
 
 
 def predict(node, test_subjects):

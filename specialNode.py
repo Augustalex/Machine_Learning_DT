@@ -49,3 +49,9 @@ def split(subjects, split_test):
             subjects=splits[test_result])
         for test_result in splits.keys()
         ]
+
+
+class Subject:
+    def __init__(self, features, class_label):
+        self.class_label = class_label
+        self.features = features
