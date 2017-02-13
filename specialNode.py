@@ -49,10 +49,3 @@ def split(subjects, split_test):
         ]
 
 
-class Subject:
-    def __init__(self, features, class_label):
-        self.class_label = class_label
-        self.features = features
-
-    def print(self):
-        print("Subject [ class: " + str(self.class_label) + " ]")
