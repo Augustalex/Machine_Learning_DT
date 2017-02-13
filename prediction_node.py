@@ -1,12 +1,14 @@
 from collections import defaultdict, namedtuple
 
+from record_subject import Subject
+
 SplitNodeSubjects = namedtuple('SplitNode', ['node', 'subjects'])
 
 ''' We create the node class to hold the label, test: for when we use our model for the
     test data. Ofcourse we also need a reference to the child nodes.'''
 
 
-class Node:
+class PredictionNode:
     def __init__(self, split_value=None):
         self.split_value = split_value
         self.split_test = None
@@ -31,7 +33,31 @@ class Node:
         raise Exception('No suitable path for subject in Node.')
 
 
-def split(subjects, split_test):
+def predict(node, test_subjects):
+    subjects = [Subject(row, None) for row in test_subjects]
+    return [get_class_for_subject(node, subject) for subject in subjects]
+
+
+def get_class_for_subject(node, subject):
+    if not node.label:
+        return get_class_for_subject(
+            node.get_child_from_test(subject), subject
+        )
+    else:
+        return node.label
+
+
+def compare_results(prediction, correct_result):
+    correct = 0
+    for i in range(len(prediction)):
+        if prediction[i] == correct_result[i]:
+            correct += 1
+
+    percentage = correct / len(prediction)
+    print("Correct to " + str(percentage * 100) + "%")
+
+
+def split_to_prediction_nodes(subjects, split_test):
     """ here we take care of the splitting of the
         nodes and group them correctly"""
 
@@ -44,8 +70,6 @@ def split(subjects, split_test):
 
     # Puts the group of subjects into new child nodes
     return [
-        SplitNodeSubjects(node=Node(test_result),subjects=splits[test_result])
+        SplitNodeSubjects(node=PredictionNode(test_result), subjects=splits[test_result])
         for test_result in splits.keys()
         ]
-
-

@@ -1,14 +1,14 @@
 import time
-from collections import defaultdict
 
-from ProjektFiler.gini_index import generate_best_split_of_all_features, generate_best_split
-from specialNode import Node
+from gini_index import generate_best_split_of_all_features, generate_best_split
+from prediction_node import PredictionNode
+from record_subject import Subject, group_has_same_label, most_common_class_label
 
 
 def start_hunts(data_features, data_class_labels):
     subjects = [Subject(row, label) for row, label in zip(data_features, data_class_labels)]
 
-    model = Node()
+    model = PredictionNode()
 
     start = time.time()
 
@@ -74,54 +74,4 @@ def __hunts(parent_node, subjects, feature_index, min_samples_leaf=1, max_depth=
                 __hunts(split_node.node, split_node.subjects, feature_index + 1)
 
 
-def most_common_class_label(subjects):
-    result_set = defaultdict(int)
-    for subject in subjects:
-        result_set[subject.class_label[0]] += 1
 
-    return max(result_set, key=result_set.get)
-
-
-def group_has_same_label(subjects):
-    first_label = subjects[0].class_label
-    for subject in subjects:
-        if subject.class_label != first_label:
-            # if the subjects class label is not the same as the first label
-            # then this group does not all have the same label
-            return False
-
-    # They all have the same class label
-    return True
-
-
-def compare_results(prediction, correct_result):
-    correct = 0
-    for i in range(len(prediction)):
-        if prediction[i] == correct_result[i]:
-            correct += 1
-
-    percentage = correct / len(prediction)
-    print("Correct to " + str(percentage * 100) + "%")
-
-
-def predict(node, test_subjects):
-    subjects = [Subject(row, None) for row in test_subjects]
-    return [get_class_for_subject(node, subject) for subject in subjects]
-
-
-def get_class_for_subject(node, subject):
-    if not node.label:
-        return get_class_for_subject(
-            node.get_child_from_test(subject), subject
-        )
-    else:
-        return node.label
-
-
-class Subject:
-    def __init__(self, features, class_label):
-        self.class_label = class_label
-        self.features = features
-
-    def print(self):
-        print("Subject [ class: " + str(self.class_label) + " ]")

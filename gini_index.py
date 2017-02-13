@@ -1,6 +1,6 @@
 from collections import defaultdict, namedtuple
 
-from specialNode import split
+from prediction_node import split_to_prediction_nodes
 
 GiniSplit = namedtuple('GiniSplit', ['split', 'gini_index', 'test'])
 
@@ -33,7 +33,7 @@ def generate_best_split(subjects, feature_index):
 
 
 def calculate_split_gini(subjects, test):
-    split_pairs = split(subjects, test)
+    split_pairs = split_to_prediction_nodes(subjects, test)
     n_parent_subjects = len(subjects)
     gini_index = 0
     for child in split_pairs:
@@ -72,6 +72,6 @@ def generate_binary_split_test_permutations(subjects, feature_index):
 
 def generate_binary_split_permutations(subjects, feature_index):
     return [
-        split(subjects, lambda x: x.features[feature_index] <= subject.features[feature_index])
+        split_to_prediction_nodes(subjects, lambda x: x.features[feature_index] <= subject.features[feature_index])
         for subject in subjects
         ]

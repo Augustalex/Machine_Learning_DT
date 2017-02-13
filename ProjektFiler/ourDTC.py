@@ -5,7 +5,8 @@ import pandas
 import sklearn.model_selection
 from sklearn.tree import DecisionTreeClassifier
 
-from hunts_algorithm import compare_results, predict, start_hunts
+from hunts_algorithm import start_hunts
+from prediction_node import compare_results, predict
 
 df = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv",
                      header=None)
