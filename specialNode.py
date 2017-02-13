@@ -44,9 +44,7 @@ def split(subjects, split_test):
 
     # Puts the group of subjects into new child nodes
     return [
-        SplitNodeSubjects(
-            node=Node(test_result),
-            subjects=splits[test_result])
+        SplitNodeSubjects(node=Node(test_result),subjects=splits[test_result])
         for test_result in splits.keys()
         ]
 
@@ -55,3 +53,6 @@ class Subject:
     def __init__(self, features, class_label):
         self.class_label = class_label
         self.features = features
+
+    def print(self):
+        print("Subject [ class: " + str(self.class_label) + " ]")
