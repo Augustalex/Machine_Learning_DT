@@ -8,11 +8,11 @@ GiniSplit = namedtuple('GiniSplit', ['split', 'gini_index', 'test'])
 def generate_best_split_of_all_features(subjects):
     n_features = len(subjects[0].features)
 
-    #print("\n\t\tGenerating splits.")
+    print("\n\t\tGenerating splits.")
     candidates = [generate_best_split(subjects, feature_index) for feature_index in range(n_features)]
 
     best_candidate = min(candidates, key=lambda x: x.gini_index)
-    #print("\t\tBest was: " + str(best_candidate.gini_index) + "\n")
+    print("\t\tBest was: " + str(best_candidate.gini_index) + "\n")
     return best_candidate
 
 

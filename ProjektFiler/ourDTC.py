@@ -40,7 +40,6 @@ def start_hunts(data_features, data_class_labels):
     print("\nTime elapsed: " + str(end - start) + "s")
     print("\tNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].features)))
     print("\tMax depth: " + str(max_depth) + "\tMin samples leaf: " + str(min_samples_leaf) + "\n")
-    print("Gåochläggasigdags")
 
     return model
 
@@ -71,7 +70,7 @@ def _hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
                 _hunts(split_node.node, split_node.subjects, depth + 1)
 
 
-def __hunts(parent_node, subjects, feature_index, max_depth=100):
+def __hunts(parent_node, subjects, feature_index, min_samples_leaf=1,max_depth=100):
     # Base-Case: If there are no features left, then return.
     if feature_index == len(subjects[0].features) or feature_index >= max_depth:
         parent_node.label = most_common_class_label(subjects)
