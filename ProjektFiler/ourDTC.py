@@ -114,7 +114,7 @@ def group_has_same_label(subjects):
     return True
 
 
-df = pandas.read_csv(r"C:\Users\August\Documents\ILS Projekt\ILS Projekt Dataset\csv_binary\binary\diabetes.csv",
+df = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv",
                      header=None)
 
 # print(df[:2])
