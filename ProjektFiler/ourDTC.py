@@ -19,7 +19,6 @@ y_arr = arr[1:, -1:]
 
 X_arr.astype(np.double)
 
-# Bosco Talkshow
 # Training set, test set, train klass label, test klass label. We split
 # into sets
 print(int(round(time.time())))

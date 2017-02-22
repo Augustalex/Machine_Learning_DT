@@ -15,7 +15,7 @@ def start_hunts(data_features, data_class_labels):
     max_depth = None
     min_samples_leaf = 1
 
-    _hunts(model, subjects, 0, min_samples_leaf, max_depth)
+    hunts(model, subjects, 0, min_samples_leaf, max_depth)
     end = time.time()
 
     print("\nTime elapsed: " + str(end - start) + "s")
@@ -25,53 +25,46 @@ def start_hunts(data_features, data_class_labels):
     return model
 
 
-def _hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
-    # print("\n\n\t\tDEPTH " + str(depth) + "\n\n")
+def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
     # Base-Case: If there are no features left, then return.
+
+    """
+        Note that this is a recursive algorithm.
+    :param parent_node: Current Node (Part of recursion)
+    :param subjects: Subjects related to current node (Part of recursion)
+    :param depth: Current recursive depth
+    :param min_samples_leaf: Minimum number of subjects before the tree should be closed.
+    :param max_depth: The maximum recursive depth before the tree should be closed.
+    :return: Nothing. The end result is stored in the original Parent Node, all through the recursion.
+    """
+
+    # If a max_depth is defined and is smaller or equal to the current depth, end the recursion.
+    # If the number of subjects is less or equal to the minimum number of subjects, end the recursion.
     if max_depth is not None and depth >= max_depth or len(subjects) <= min_samples_leaf:
         parent_node.label = most_common_class_label(subjects)
+    # If all subjects relate to the same class label, end the recursion.
     elif group_has_same_label(subjects):
         parent_node.label = subjects[0].class_label
     else:
         """Constructs a test with the mean value of subjects
         current feature (feature_index), so we know where to split."""
 
-        # Splits the node with the new feature test
+        # Uses gini to generate the best split out of all features.
         best_gini_split = generate_best_split_of_all_features(subjects)
+
+        # Stores the test of the "best split" in the parent node, for future prediction with that node.
         parent_node.split_test = best_gini_split.test
 
-        split_nodes = best_gini_split.split
-        # split_nodes = split(subjects, test)
-        if len(split_nodes) <= 1:
-            _hunts(parent_node, subjects, depth + 1)
+        """
+            If the number of nodes in the new split is one or less,
+            then there are no more useful features to be split.
+            The most common class label amongst the subjects is set
+            at the parent_node.
+        """
+        if len(best_gini_split.split) <= 1:
+            parent_node.label = most_common_class_label(subjects)
         else:
-            for split_node in split_nodes:
+            # For all nodes in the chosen split (best_gini_split.split) run it through the hunts algorithm.
+            for split_node in best_gini_split.split:
                 parent_node.child_nodes.append(split_node.node)
-                _hunts(split_node.node, split_node.subjects, depth + 1)
-
-
-def __hunts(parent_node, subjects, feature_index, min_samples_leaf=1, max_depth=100):
-    # Base-Case: If there are no features left, then return.
-    if feature_index == len(subjects[0].features) or feature_index >= max_depth:
-        parent_node.label = most_common_class_label(subjects)
-    elif group_has_same_label(subjects):
-        parent_node.label = subjects[0].class_label
-    else:
-        """Constructs a test with the mean value of subjects
-        current feature (feature_index), so we know where to split."""
-
-        # Splits the node with the new feature test
-        best_gini_split = generate_best_split(subjects, feature_index)
-        parent_node.split_test = best_gini_split.test
-
-        split_nodes = best_gini_split.split
-        # split_nodes = split(subjects, test)
-        if len(split_nodes) <= 1:
-            __hunts(parent_node, subjects, feature_index + 1)
-        else:
-            for split_node in split_nodes:
-                parent_node.child_nodes.append(split_node.node)
-                __hunts(split_node.node, split_node.subjects, feature_index + 1)
-
-
-
+                hunts(split_node.node, split_node.subjects, depth + 1)

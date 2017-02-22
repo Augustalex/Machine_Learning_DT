@@ -9,6 +9,14 @@ SplitNodeSubjects = namedtuple('SplitNode', ['node', 'subjects'])
 
 
 class PredictionNode:
+    """
+        This Node is used for Prediction of data.
+        First the node must be fitting to reflect a model
+        for which the prediction is made on. The fitting is done
+        by testing splits and choosing the best split and its test.
+        This test is stored in the PredictionNode and is thus used for predictions
+        of new data.
+    """
     def __init__(self, split_value=None):
         self.split_value = split_value
         self.split_test = None
@@ -22,6 +30,13 @@ class PredictionNode:
         we don't have a test or else: we throw a exception. '''
 
     def get_child_from_test(self, subject):
+        """
+            From the test stored in the Node a given subject
+            will translate to a different child node based
+            on the outcome of the test.
+        :param subject:
+        :return:
+        """
         if self.split_test is None:
             raise Exception('Node has no split test.')
 
