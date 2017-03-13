@@ -1,6 +1,8 @@
 import time
 
-from gini_index import generate_best_split_of_all_features, generate_best_split
+from criterion import generate_best_split_of_all_features
+from entropy import Entropy
+from gini_index import Gini
 from prediction_node import PredictionNode
 from record_subject import Subject, group_has_same_label, most_common_class_label
 
@@ -50,7 +52,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
         current feature (feature_index), so we know where to split."""
 
         # Uses gini to generate the best split out of all features.
-        best_gini_split = generate_best_split_of_all_features(subjects)
+        best_gini_split = generate_best_split_of_all_features(subjects, Entropy)
 
         # Stores the test of the "best split" in the parent node, for future prediction with that node.
         parent_node.split_test = best_gini_split.test
