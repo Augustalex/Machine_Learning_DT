@@ -32,6 +32,18 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
 
     """
         Note that this is a recursive algorithm.
+    - Criterion ar Gini eller Entropy
+    - Check labb spec for other parameters we might have missed
+    - Make a Class "DecisionTreeClassifier"
+    - Class should have class variable "node" or "tree"
+    - The class should have two methods at least "fit" and "predict"
+    - Predict should use the "tree" in the class created by "fit"
+    - Check out "predictProb", mentioned in the lab spec. What does it do..? Should not be
+    too different from the regular "prediction" method.
+
+    - Random forrest should have several instances of this DecisionTreeClassifier class we
+    are going to make
+
     :param parent_node: Current Node (Part of recursion)
     :param subjects: Subjects related to current node (Part of recursion)
     :param depth: Current recursive depth
