@@ -34,7 +34,6 @@ class OurDecisionTreeClassifier:
         self.max_features = max_features
         self.max_depth = max_depth
         self.min_sample_leaf = min_sample_leaf
-
         self.model = None
 
     def fit(self, features_train, class_labels_train):
@@ -82,3 +81,29 @@ def run():
     # print(test_prediction)
 
 run()
+
+
+class OurRandomForrestClassifier:
+
+    def __init__(self, criterion=Gini, max_features=None, max_depth=None, min_sample_leaf=1, bagging=True, sample_size=0, n_estimators=10):
+        self.criterion = criterion
+        self.max_features = max_features
+        self.max_depth = max_depth
+        self.min_sample_leaf = min_sample_leaf
+        self.bagging = bagging
+        self.sample_size = sample_size
+        self.n_estimators = n_estimators
+
+    def fit(self, features_train, class_labels_train):
+
+        # Split data int chunks bagging
+        for estimator in self.n_estimators:
+
+        self.model = start_hunts(features_train, class_labels_train)
+        return self
+        #
+
+
+    def predict(self, features_test):
+
+    def predictProb(self, test_features):
