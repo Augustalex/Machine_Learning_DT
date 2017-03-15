@@ -19,15 +19,16 @@ y_arr = arr[1:, -1:]
 
 # Training set, test set, train klass label, test klass label. We split
 # into sets
-print(int(round(time.time())))
-x_train, x_test, y_train, y_test = sklearn.model_selection \
-    .train_test_split(X_arr, y_arr, test_size=0.33, random_state=int(round(time.time())))
-
-x_train = [[float(n) for n in row] for row in x_train]
-x_test = [[float(n) for n in row] for row in x_test]
+# print(int(round(time.time())))
+# x_train, x_test, y_train, y_test = sklearn.model_selection \
+#     .train_test_split(X_arr, y_arr, test_size=0.33, random_state=int(round(time.time())))
+#
+# x_train = [[float(n) for n in row] for row in x_train]
+# x_test = [[float(n) for n in row] for row in x_test]
 
 
 def test_hunts():
+
     model = start_hunts(x_train, y_train)
     y_test_predict = predict(model, x_train)
     compare_results(y_test_predict, y_train)
@@ -36,9 +37,9 @@ def test_hunts():
 # test_hunts()
 
 #numpy.set_printoptions(threshold=numpy.inf)
-dtc = DecisionTreeClassifier()
-dtc.fit(x_train, y_train)
-dtc.predict(x_test)
-hej = dtc.predict_proba(x_train)
+# dtc = DecisionTreeClassifier()
+# dtc.fit(x_train, y_train)
+# dtc.predict(x_test)
+# hej = dtc.predict_proba(x_train)
 
-print(hej)
+# print(hej)

@@ -17,6 +17,7 @@ class PredictionNode:
         This test is stored in the PredictionNode and is thus used for predictions
         of new data.
     """
+
     def __init__(self, split_value=None):
         self.split_value = split_value
         self.split_test = None
@@ -50,7 +51,9 @@ class PredictionNode:
 
 def predict(node, test_subjects):
     subjects = [Subject(row, None) for row in test_subjects]
-    return [get_class_for_subject(node, subject) for subject in subjects]
+    res = [get_class_for_subject(node, subject) for subject in subjects]
+    print(res)
+    return res
 
 
 def get_class_for_subject(node, subject):
