@@ -1,5 +1,6 @@
 from collections import defaultdict, namedtuple
 
+from criterion import generate_class_frequency_map
 from record_subject import Subject
 
 SplitNodeSubjects = namedtuple('SplitNode', ['node', 'subjects'])
@@ -25,6 +26,7 @@ class PredictionNode:
         self.split_value = split_value
         self.split_test = None
         self.label = None
+        self.subjects = None
         self.child_nodes = []
 
     def set_class_label(self, label):
@@ -57,20 +59,39 @@ class PredictionNode:
         raise Exception('No suitable path for subject in Node.')
 
 
-def predict(node, test_subjects):
+def predict(model, test_subjects):
     subjects = [Subject(row, None) for row in test_subjects]
-    res = [get_class_for_subject(node, subject) for subject in subjects]
+    res = [get_class_for_subject(model, subject) for subject in subjects]
     print(res)
     return res
 
 
-def get_class_for_subject(node, subject):
-    if not node.label:
+def get_class_for_subject(model, subject):
+    if not model.label:
         return get_class_for_subject(
-            node.get_child_from_test(subject), subject
+            model.get_child_from_test(subject), subject
         )
     else:
-        return node.label
+        return model.label
+
+
+"""
+
+    Class label: n subjects of that class
+    A: 2
+    B: 3
+    C: 1
+
+
+"""
+
+def get_classes_for_subject(model, subject):
+    if not model.label:
+        return get_classes_for_subject(
+            model.get_child_from_test(subject), subject
+        )
+    else:
+        return generate_class_frequency_map(model.subjects)
 
 
 def compare_results(prediction, correct_result):

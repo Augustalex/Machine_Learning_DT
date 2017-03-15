@@ -27,7 +27,7 @@ def start_hunts(data_features, data_class_labels):
     end = time.time()
 
     print("\nTime elapsed: " + str(end - start) + "s")
-    print("\tNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].features)))
+    print("\tNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].class_features)))
     print("\tMax depth: " + str(max_depth) + "\tMin samples leaf: " + str(min_samples_leaf) + "\n")
 
     return model
@@ -73,6 +73,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
         """
         if len(best_gini_split.split) <= 1:
             parent_node.label = most_common_class_label(subjects)
+            parent_node.subjects = subjects
         else:
             # For all nodes in the chosen split (best_gini_split.split) run it through the hunts algorithm.
             for split_node in best_gini_split.split:

@@ -1,11 +1,11 @@
 import pandas
 import time
 
+from criterion import generate_class_frequency_map
 from hunts_algorithm import start_hunts
-from prediction_node import compare_results, predict
+from prediction_node import compare_results, predict, PredictionNode, get_classes_for_subject
 from gini_index import Gini
 from sklearn.model_selection import train_test_split
-
 
 def parse_integer_table(data):
     return [[float(n) for n in row] for row in data]
@@ -36,17 +36,22 @@ class OurDecisionTreeClassifier:
 
     def fit(self, features_train, class_labels_train):
         self.model = start_hunts(features_train, class_labels_train)
-        return self
+        return self.model
 
     def predict(self, test_features):
         test_prediction = predict(self.model, test_features)
         return test_prediction
 
-    def predictProb(self, test_prediction):
-        prob = test_prediction
-        # gå genom alla subjects
-        # om det är en lövnod -> räkna ditrubutionen. (frekvensen/antal)
+    def predictProb(self, tree, test_features):
+        class_frequency_maps = [get_classes_for_subject(tree, test_feature) for test_feature in test_features]
+        return [from_frequency_to_probability(frequency_map) for frequency_map in class_frequency_maps]
 
+def from_frequency_to_probability(frequency_map):
+    proba_list = []
+    total = sum(frequency_map)
+    for n_of_class in frequency_map:
+        proba_list.append((n_of_class/total))
+    return proba_list
 
 def run():
     data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
@@ -63,9 +68,9 @@ def run():
     tree = dtc.fit(train_features, train_labels)
     test_prediction = dtc.predict(test_features)
     compare_results(test_prediction, test_labels)
-    # probability_prediction = dtc.predictProb()
+    probability_prediction = dtc.predictProb(tree, test_features)
     #
-    # print(probability_prediction)
+    #print(probability_prediction)
     # print(test_prediction)
 
 run()
