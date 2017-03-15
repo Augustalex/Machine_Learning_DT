@@ -6,7 +6,7 @@ class Subject:
         It contains several features (represents the columns of the data)
         and a class label.
     """
-    def __init__(self, features, class_label):
+    def __init__(self, features, class_label=None):
         self.class_label = class_label
         self.class_features = features
 

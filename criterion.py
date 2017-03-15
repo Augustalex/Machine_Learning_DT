@@ -14,6 +14,9 @@ class Criterion:
 
 
 def generate_best_split_of_all_features(subjects, criterion):
+    if len(subjects) == 0:
+        return SplitInformation([],0,None)
+
     n_features = len(subjects[0].class_features)
 
     # Generate best split of all best splits for each feature
@@ -43,7 +46,8 @@ def generate_best_split(subjects, feature_index, criterion):
 def generate_class_frequency_map(subjects):
     # A dictionary which entries is automatically set to 0 when first assigned a value
     class_frequency = defaultdict(int)
-
+    if subjects == None:
+        return
     # For each class label found in a subject increase its entry in the dictionary by 1.
     for subject in subjects:
         class_frequency[subject.class_label[0]] += 1
