@@ -14,7 +14,7 @@ class Criterion:
 
 
 def generate_best_split_of_all_features(subjects, criterion):
-    n_features = len(subjects[0].features)
+    n_features = len(subjects[0].class_features)
 
     # Generate best split of all best splits for each feature
     # print("\n\t\tGenerating splits.")
@@ -60,6 +60,6 @@ def generate_binary_split_test_permutations(subjects, feature_index):
     :return: a list of split tests
     """
     return [
-        lambda x: x.features[feature_index] <= subject.features[feature_index]
+        lambda x: x.class_features[feature_index] <= subject.class_features[feature_index]
         for subject in subjects
         ]

@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-
 class Subject:
     """
         Represents a Row in a matrix of training data.
@@ -9,7 +8,7 @@ class Subject:
     """
     def __init__(self, features, class_label):
         self.class_label = class_label
-        self.features = features
+        self.class_features = features
 
     def print(self):
         print("Subject [ class: " + str(self.class_label) + " ]")
