@@ -59,7 +59,9 @@ class PredictionNode:
 
 def predict(node, test_subjects):
     subjects = [Subject(row, None) for row in test_subjects]
-    return [get_class_for_subject(node, subject) for subject in subjects]
+    res = [get_class_for_subject(node, subject) for subject in subjects]
+    print(res)
+    return res
 
 
 def get_class_for_subject(node, subject):

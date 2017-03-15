@@ -17,12 +17,12 @@ def generate_best_split_of_all_features(subjects, criterion):
     n_features = len(subjects[0].features)
 
     # Generate best split of all best splits for each feature
-    print("\n\t\tGenerating splits.")
+    # print("\n\t\tGenerating splits.")
     candidates = [generate_best_split(subjects, feature_index, criterion) for feature_index in range(n_features)]
 
     # Select the candidate with an index closest to 0
     best_candidate = criterion.select_candidate(candidates)
-    print("\t\tBest was: " + str(best_candidate.index) + "\n")
+    # print("\t\tBest was: " + str(best_candidate.index) + "\n")
     return best_candidate
 
 
