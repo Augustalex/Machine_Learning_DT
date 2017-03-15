@@ -1,3 +1,4 @@
+import numpy
 import pandas
 import time
 
@@ -17,14 +18,7 @@ def parse_integer_table(data):
 def unzip_features_and_labels(data):
     features = data[1:, :-1]
     labels = data[1:, -1:]
-
-    # X_arr.astype(pandas.np.double)
     features = parse_integer_table(features)
-
-    # Training set, test set, train klass label, test klass label. We split
-    # into sets
-    # X_test = parse_integer_table(X_test)
-
     return features, labels
 
 
@@ -51,6 +45,38 @@ class OurDecisionTreeClassifier:
         #        leaf_nodes.append(node)
         class_frequency_maps = [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in test_features]
         return [from_frequency_to_probability(frequency_map) for frequency_map in class_frequency_maps]
+
+class OurRandomForrestClassifier:
+
+    def __init__(self, sample_size, max_features, criterion=Gini, max_depth=None, min_sample_leaf=1, bagging=True, n_estimators=10):
+        self.criterion = criterion
+        self.max_features = max_features
+        self.max_depth = max_depth
+        self.min_sample_leaf = min_sample_leaf
+        self.bagging = bagging
+        self.sample_size = sample_size #value between 0-1
+        self.n_estimators = n_estimators
+
+        self.estimators = None
+
+    def fit(self, features_train, class_labels_train):
+        samples_x = []
+        samples_y = []
+        n_rows = len(class_labels_train)
+        size = n_rows * self.sample_size
+        if not self.bagging == False:
+            for dt in range(self.n_estimators):
+                for i in range(size):
+                    index = numpy.random.randint(0, n_rows)
+                    samples_x.append(features_train[index])
+                    samples_y.append(class_labels_train[index])
+                dt = OurDecisionTreeClassifier()
+                model = dt.fit(samples_x,samples_y)
+                self.estimators.append(model)
+
+
+    def predict(self, test_features):
+        pass
 
 def from_frequency_to_probability(frequency_map):
     proba_list = []
@@ -83,27 +109,3 @@ def run():
 run()
 
 
-class OurRandomForrestClassifier:
-
-    def __init__(self, criterion=Gini, max_features=None, max_depth=None, min_sample_leaf=1, bagging=True, sample_size=0, n_estimators=10):
-        self.criterion = criterion
-        self.max_features = max_features
-        self.max_depth = max_depth
-        self.min_sample_leaf = min_sample_leaf
-        self.bagging = bagging
-        self.sample_size = sample_size
-        self.n_estimators = n_estimators
-
-    def fit(self, features_train, class_labels_train):
-
-        # Split data int chunks bagging
-        for estimator in self.n_estimators:
-
-        self.model = start_hunts(features_train, class_labels_train)
-        return self
-        #
-
-
-    def predict(self, features_test):
-
-    def predictProb(self, test_features):
