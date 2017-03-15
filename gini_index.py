@@ -1,6 +1,6 @@
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 
-from criterion import generate_class_frequency_map, generate_binary_split_test_permutations, Criterion
+from criterion import generate_class_frequency_map, Criterion
 from prediction_node import split_to_prediction_nodes
 
 SplitInformation = namedtuple('SplitInformation', ['split', 'index', 'test'])

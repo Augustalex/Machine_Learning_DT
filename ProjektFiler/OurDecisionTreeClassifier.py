@@ -1,8 +1,12 @@
+from random import randint
+
 import numpy
 import pandas
 import time
 
-from criterion import generate_class_frequency_map
+from collections import defaultdict
+from scipy._lib.six import xrange
+
 from hunts_algorithm import start_hunts
 from prediction_node import compare_results, predict, PredictionNode, get_classes_for_subject
 from gini_index import Gini
@@ -48,7 +52,7 @@ class OurDecisionTreeClassifier:
 
 class OurRandomForrestClassifier:
 
-    def __init__(self, sample_size, max_features, criterion=Gini, max_depth=None, min_sample_leaf=1, bagging=True, n_estimators=10):
+    def __init__(self, sample_size, n_estimators, max_features=None, criterion=Gini, max_depth=None, min_sample_leaf=1, bagging=True):
         # criterion: gini or entropy
         self.criterion = criterion
         self.max_features = max_features
@@ -58,7 +62,7 @@ class OurRandomForrestClassifier:
         self.sample_size = sample_size
         self.n_estimators = n_estimators
 
-        self.estimators = None
+        self.estimators = []
 
     """
         Our random-forest fit function recieves training data and if bagging is true: loops through
@@ -72,22 +76,50 @@ class OurRandomForrestClassifier:
         n_rows = len(class_labels_train)
         # total sample size to use: by multiplying with total rows.
         size = n_rows * self.sample_size
-        if not self.bagging == False:
-            for dt in range(self.n_estimators):
+        if self.bagging:
+            for dt in xrange(self.n_estimators):
                 samples_x = []
                 samples_y = []
-                for i in range(size):
+                for i in xrange(int(size)):
                     # in each loop we append an random row of data to our samples list.
-                    index = numpy.random.randint(0, n_rows)
+                    index = randint(0, n_rows-1)
                     samples_x.append(features_train[index])
                     samples_y.append(class_labels_train[index])
                 dt = OurDecisionTreeClassifier()
                 model = dt.fit(samples_x,samples_y)
                 self.estimators.append(model)
+        else: #the definition of insanity, to do the same thing over and over again hoping for a different outcome
+            for dt in xrange(self.n_estimators):
+                dt = OurDecisionTreeClassifier()
+                model = dt.fit(features_train, class_labels_train)
+                self.estimators.append(model)
 
 
     def predict(self, test_features):
-        pass
+        """ predict method takes in the test features and for each created estimators model
+            it runs the prediction algorithm on the test_features data.
+            It then returns the most voted for prediction.
+            """
+        predictions = [predict(estimator.model, test_features) for estimator in self.estimators]
+
+        nominees = []
+        for i in range(0, len(test_features)):
+            castVotes = [prediction_set[i] for prediction_set in predictions]
+            nominees.append(nominate(castVotes))
+
+        return nominees
+
+
+def nominate(votes):
+    count = defaultdict(int)
+    for vote in votes:
+        if type(vote) == numpy.ndarray:
+            vote = vote[0]
+
+        count[vote] += 1
+
+    return max(count, key=lambda i: count[i])
+
 
 def from_frequency_to_probability(frequency_map):
     proba_list = []
@@ -112,11 +144,34 @@ def run():
     dtc.fit(train_features, train_labels)
     test_prediction = dtc.predict(test_features)
     compare_results(test_prediction, test_labels)
-    probability_prediction = dtc.predictProb(test_features)
+    #probability_prediction = dtc.predictProb(test_features)
     #
     #print(probability_prediction)
-    # print(test_prediction)
+    #print(test_prediction)
 
-run()
+
+def undress_num_py_arrays(arrays):
+    return tuple([array.tolist() if type(array) == 'numpy.ndarray' else array for array in arrays])
+
+
+def run_forest_run():
+    data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
+    data = pandas.np.array(data)
+    features_, labels_ = unzip_features_and_labels(data)
+    train_features, test_features, train_labels, test_labels = \
+        train_test_split(
+            features_, labels_,
+            test_size=0.33,
+            random_state=int(round(time.time()))
+        )
+
+    train_features, test_features, train_labels, test_labels = undress_num_py_arrays([train_features, test_features, train_labels, test_labels])
+
+    rfc = OurRandomForrestClassifier(sample_size=0.5, n_estimators=10)
+    rfc.fit(train_features,train_labels)
+    test_prediction = rfc.predict(test_features)
+    compare_results(test_prediction, test_labels)
+
+run_forest_run()
 
 
