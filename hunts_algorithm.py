@@ -6,18 +6,24 @@ from gini_index import Gini
 from prediction_node import PredictionNode
 from record_subject import Subject, group_has_same_label, most_common_class_label
 
-
+'''
+    Starts the hunt function and measures the time for completion. When
+    done, this function returns the model that can be used for the
+    test data.
+'''
 def start_hunts(data_features, data_class_labels):
     subjects = [Subject(row, label) for row, label in zip(data_features, data_class_labels)]
 
+    # Prediction node becomes our model
     model = PredictionNode()
-
+    # Starting time
     start = time.time()
 
     max_depth = None
     min_samples_leaf = 1
-
+    # We send our model inside of hunts for training.
     hunts(model, subjects, 0, min_samples_leaf, max_depth)
+    # End time
     end = time.time()
 
     print("\nTime elapsed: " + str(end - start) + "s")
@@ -32,18 +38,6 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
 
     """
         Note that this is a recursive algorithm.
-    - Criterion ar Gini eller Entropy
-    - Check labb spec for other parameters we might have missed
-    - Make a Class "DecisionTreeClassifier"
-    - Class should have class variable "node" or "tree"
-    - The class should have two methods at least "fit" and "predict"
-    - Predict should use the "tree" in the class created by "fit"
-    - Check out "predictProb", mentioned in the lab spec. What does it do..? Should not be
-    too different from the regular "prediction" method.
-
-    - Random forrest should have several instances of this DecisionTreeClassifier class we
-    are going to make
-
     :param parent_node: Current Node (Part of recursion)
     :param subjects: Subjects related to current node (Part of recursion)
     :param depth: Current recursive depth
@@ -60,11 +54,13 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
     elif group_has_same_label(subjects):
         parent_node.label = subjects[0].class_label
     else:
-        """Constructs a test with the mean value of subjects
-        current feature (feature_index), so we know where to split."""
+        """
+            Constructs a test with the mean value of subjects
+            current feature (feature_index), so we know where to split.
+        """
 
-        # Uses gini to generate the best split out of all features.
-        best_gini_split = generate_best_split_of_all_features(subjects, Gini)
+        # Uses gini/entropy to generate the best split out of all features.
+        best_gini_split = generate_best_split_of_all_features(subjects, Entropy)
 
         # Stores the test of the "best split" in the parent node, for future prediction with that node.
         parent_node.split_test = best_gini_split.test
@@ -81,4 +77,5 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
             # For all nodes in the chosen split (best_gini_split.split) run it through the hunts algorithm.
             for split_node in best_gini_split.split:
                 parent_node.child_nodes.append(split_node.node)
+                # Parent node, subjects, depth
                 hunts(split_node.node, split_node.subjects, depth + 1)

@@ -3,7 +3,9 @@ import math
 from criterion import generate_class_frequency_map, SplitInformation, Criterion
 from prediction_node import split_to_prediction_nodes
 
-
+"""
+    This is the Entropy class.
+"""
 class Entropy(Criterion):
     @staticmethod
     def calculate_node_index(subjects, split_test):

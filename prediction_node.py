@@ -4,8 +4,11 @@ from record_subject import Subject
 
 SplitNodeSubjects = namedtuple('SplitNode', ['node', 'subjects'])
 
-''' We create the node class to hold the label, test: for when we use our model for the
-    test data. Ofcourse we also need a reference to the child nodes.'''
+"""
+    PredictionNode becomes the model for the test data.
+    We create the node class to hold the label, test: for when we use our model for the
+    test data. Ofcourse we also need a reference to the child nodes.
+"""
 
 
 class PredictionNode:
@@ -17,6 +20,7 @@ class PredictionNode:
         This test is stored in the PredictionNode and is thus used for predictions
         of new data.
     """
+
     def __init__(self, split_value=None):
         self.split_value = split_value
         self.split_test = None
@@ -37,10 +41,15 @@ class PredictionNode:
         :param subject:
         :return:
         """
+
+        # No test equals no outcome, so we raise an exception
         if self.split_test is None:
             raise Exception('Node has no split test.')
 
+        # Else we do an split test on the subjects
         result = self.split_test(subject)
+
+        # While looping through the child, we return the child that matches the split value.
         for child in self.child_nodes:
             if child.split_value == result:
                 return child
