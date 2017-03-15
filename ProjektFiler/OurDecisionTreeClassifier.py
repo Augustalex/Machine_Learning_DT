@@ -7,6 +7,9 @@ from prediction_node import compare_results, predict, PredictionNode, get_classe
 from gini_index import Gini
 from sklearn.model_selection import train_test_split
 
+from record_subject import Subject
+
+
 def parse_integer_table(data):
     return [[float(n) for n in row] for row in data]
 
@@ -36,18 +39,23 @@ class OurDecisionTreeClassifier:
 
     def fit(self, features_train, class_labels_train):
         self.model = start_hunts(features_train, class_labels_train)
-        return self.model
+        return self
 
     def predict(self, test_features):
         test_prediction = predict(self.model, test_features)
         return test_prediction
 
-    def predictProb(self, tree, test_features):
-        class_frequency_maps = [get_classes_for_subject(tree, test_feature) for test_feature in test_features]
+    def predictProb(self, test_features):
+        #leaf_nodes = []
+        #for node in test_features:S
+        #    if not node.child_nodes:
+        #        leaf_nodes.append(node)
+        class_frequency_maps = [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in test_features]
         return [from_frequency_to_probability(frequency_map) for frequency_map in class_frequency_maps]
 
 def from_frequency_to_probability(frequency_map):
     proba_list = []
+
     total = sum(frequency_map)
     for n_of_class in frequency_map:
         proba_list.append((n_of_class/total))
@@ -65,10 +73,10 @@ def run():
             random_state=int(round(time.time()))
         )
 
-    tree = dtc.fit(train_features, train_labels)
+    dtc.fit(train_features, train_labels)
     test_prediction = dtc.predict(test_features)
     compare_results(test_prediction, test_labels)
-    probability_prediction = dtc.predictProb(tree, test_features)
+    probability_prediction = dtc.predictProb(test_features)
     #
     #print(probability_prediction)
     # print(test_prediction)

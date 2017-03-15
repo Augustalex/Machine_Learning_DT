@@ -62,7 +62,7 @@ class PredictionNode:
 def predict(model, test_subjects):
     subjects = [Subject(row, None) for row in test_subjects]
     res = [get_class_for_subject(model, subject) for subject in subjects]
-    print(res)
+    #print(res)
     return res
 
 
@@ -91,7 +91,9 @@ def get_classes_for_subject(model, subject):
             model.get_child_from_test(subject), subject
         )
     else:
-        return generate_class_frequency_map(model.subjects)
+        #print('hej', model.label, model.subjects)
+        if(model.subjects != None):
+            return generate_class_frequency_map(model.subjects)
 
 
 def compare_results(prediction, correct_result):
