@@ -97,6 +97,7 @@ class OurRandomForrestClassifier:
                 model = dt.fit(features_train, class_labels_train)
                 self.estimators.append(model)
 
+
     def predict(self, test_features):
         """ predict method takes in the test features and for each created estimators model
             it runs the prediction algorithm on the test_features data.
@@ -131,6 +132,8 @@ def from_frequency_to_probability(frequency_map):
         proba_list.append((frequency_map[class_label] / total))
     return proba_list
 
+def undress_num_py_arrays(arrays):
+    return tuple([array.tolist() if type(array) == 'numpy.ndarray' else array for array in arrays])
 
 def run():
     data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
@@ -156,11 +159,6 @@ def run():
     # print(probability_prediction)
     # print(test_prediction)
 
-
-def undress_num_py_arrays(arrays):
-    return tuple([array.tolist() if type(array) == 'numpy.ndarray' else array for array in arrays])
-
-
 def run_forest_run():
     data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
     data = pandas.np.array(data)
@@ -176,10 +174,10 @@ def run_forest_run():
         [train_features, test_features, train_labels, test_labels])
 
     rfc = OurRandomForrestClassifier(sample_size=0.3, n_estimators=100)
-    rfc.fit(train_features, train_labels)
+    rfc.fit(train_features,train_labels)
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
+run_forest_run()
 
-# run_forest_run()
-run()
+
