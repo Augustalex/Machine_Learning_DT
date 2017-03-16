@@ -89,11 +89,11 @@ def compare(prediction1, prediction2, labels, train_labels):
             print("\nTheir auc score:" ,our_auc_score(p, r))
 
 
-def start(data_set):
+def start(data_set, rf_flag=False):
     odtc = OurDecisionTreeClassifier()
     dtc = DecisionTreeClassifier()
-    #orf = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)
-    #rf = RandomForestClassifier(n_estimators=11)
+    orf = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)
+    rf = RandomForestClassifier(n_estimators=11)
 
     data_set = pandas.np.array(data_set)
     features_, labels_ = unzip_features_and_labels(data_set)
@@ -115,16 +115,19 @@ def start(data_set):
     #fit their tree
     dtc.fit(train_features, train_labels)
     p2 = dtc.predict(test_features)
-    print("Their tree is fitted")
+    print("Their tree is fitted\n")
 
     compare(p1, p2, test_labels, labels_)
 
-    print("DecisionTreeClassifiers done, testing Random Forest")
-    #orf.fit(train_features,train_labels)
-    print("Our RandomForest fitted")
-    #rf.fit(train_features,train_labels)
-    print("Their RandomForest is fitted")
-    #compare(orf, rf, test_features, test_labels)
+    if rf_flag:
+        print("DecisionTreeClassifiers done, testing Random Forest")
+        orf.fit(train_features,train_labels)
+        p3 = orf.predict(test_features)
+        print("Our RandomForest fitted")
+        rf.fit(train_features,train_labels)
+        p4 = rf.predict(test_features)
+        print("Their RandomForest is fitted")
+        compare(p3, p4, test_labels, labels_)
 
 
-start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\mushroom.csv", header=None))
+start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\tic-tac-toe.csv", header=None), rf_flag=False)
