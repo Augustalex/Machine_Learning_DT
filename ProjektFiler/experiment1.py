@@ -1,7 +1,7 @@
 import pandas
 import time
+
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import recall_score, precision_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
@@ -9,12 +9,12 @@ from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, Ou
     unzip_features_and_labels, undress_num_py_arrays
 from prediction_node import compare_results
 
-def get_class_feaures(data):
-    classValues = []
+def get_labels(data):
+    values = []
     for item in data:
-        if not (classValues.__contains__(item)):
-            classValues.append(item)
-    return classValues
+        if not (values.__contains__(item)):
+            values.append(item)
+    return values
 
 def accuracy_test(prediction1, prediction2, true_class_labels):
     """returns the accuracy of both predictions vs the actual class_labels of the test data"""
@@ -69,13 +69,13 @@ def compare(prediction1, prediction2, labels, train_labels):
     precisions2 = []
     recalls1 = []
     recalls2 = []
-    features = get_class_feaures(train_labels)
+    train_labels = get_labels(train_labels)
     accuracy_test(prediction1, prediction2, labels)
-    for feature in features:
-        precisions1.append(our_precision_score(labels, prediction1, feature))
-        precisions2.append(our_precision_score(labels, prediction2, feature))
-        recalls1.append(our_recall_score(labels,prediction1, feature))
-        recalls2.append(our_recall_score(labels,prediction2,feature))
+    for lable in train_labels:
+        precisions1.append(our_precision_score(labels, prediction1, lable))
+        precisions2.append(our_precision_score(labels, prediction2, lable))
+        recalls1.append(our_recall_score(labels,prediction1, lable))
+        recalls2.append(our_recall_score(labels,prediction2,lable))
     print("\nOur precision:", precisions1)
     print("\nTheir precision:", precisions2)
     print("\nOur recall:", recalls1)
@@ -92,8 +92,8 @@ def compare(prediction1, prediction2, labels, train_labels):
 def start(data_set):
     odtc = OurDecisionTreeClassifier()
     dtc = DecisionTreeClassifier()
-    #orf = OurRandomForestClassifier(sample_size=0.3, n_estimators=11)
-    #rf = RandomForrestClassifier(n_estimators=11)
+    #orf = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)
+    #rf = RandomForestClassifier(n_estimators=11)
 
     data_set = pandas.np.array(data_set)
     features_, labels_ = unzip_features_and_labels(data_set)
@@ -103,21 +103,28 @@ def start(data_set):
             test_size=0.33,
             random_state=int(round(time.time()))
         )
-
+    print("Dataset split into features and labels")
     #un-numpy the arrays before predicting
     train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
         [train_features, test_features, train_labels, test_labels])
+    print("Numpy arrays undressed")
     #fit our tree
     odtc.fit(train_features, train_labels)
     p1 = odtc.predict(test_features)
+    print("Our tree is fitted")
     #fit their tree
     dtc.fit(train_features, train_labels)
     p2 = dtc.predict(test_features)
+    print("Their tree is fitted")
 
     compare(p1, p2, test_labels, labels_)
 
+    print("DecisionTreeClassifiers done, testing Random Forest")
     #orf.fit(train_features,train_labels)
+    print("Our RandomForest fitted")
     #rf.fit(train_features,train_labels)
+    print("Their RandomForest is fitted")
     #compare(orf, rf, test_features, test_labels)
 
-start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None))
+
+start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\mushroom.csv", header=None))
