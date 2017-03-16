@@ -173,11 +173,11 @@ def run_forest_run():
     train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
         [train_features, test_features, train_labels, test_labels])
 
-    rfc = OurRandomForrestClassifier(sample_size=0.3, n_estimators=100)
+    rfc = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)
     rfc.fit(train_features,train_labels)
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
-run_forest_run()
+#run_forest_run()
 
 
