@@ -62,7 +62,7 @@ class PredictionNode:
 def predict(model, test_subjects):
     subjects = [Subject(row, None) for row in test_subjects]
     res = [get_class_for_subject(model, subject) for subject in subjects]
-    #print(res)
+    # print(res)
     return res
 
 
@@ -85,14 +85,15 @@ def get_class_for_subject(model, subject):
 
 """
 
+
 def get_classes_for_subject(model, subject):
     if not model.label:
         return get_classes_for_subject(
             model.get_child_from_test(subject), subject
         )
     else:
-        #print('hej', model.label, model.subjects)
-        if(model.subjects != None):
+        # print('hej', model.label, model.subjects)
+        if model.subjects is not None:
             return generate_class_frequency_map(model.subjects)
 
 

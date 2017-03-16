@@ -43,16 +43,18 @@ class OurDecisionTreeClassifier:
         return test_prediction
 
     def predictProb(self, test_features):
-        #leaf_nodes = []
-        #for node in test_features:S
+        # leaf_nodes = []
+        # for node in test_features:S
         #    if not node.child_nodes:
         #        leaf_nodes.append(node)
-        class_frequency_maps = [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in test_features]
+        class_frequency_maps = filter(lambda x: x is not None, [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in
+                                test_features])
         return [from_frequency_to_probability(frequency_map) for frequency_map in class_frequency_maps]
 
-class OurRandomForrestClassifier:
 
-    def __init__(self, sample_size, n_estimators, max_features=None, criterion=Gini, max_depth=None, min_sample_leaf=1, bagging=True):
+class OurRandomForrestClassifier:
+    def __init__(self, sample_size, n_estimators, max_features=None, criterion=Gini, max_depth=None, min_sample_leaf=1,
+                 bagging=True):
         # criterion: gini or entropy
         self.criterion = criterion
         self.max_features = max_features
@@ -71,6 +73,7 @@ class OurRandomForrestClassifier:
         classifier and fit the tree to that data and add it to our estimators list for predictions
         in the next step.
     """
+
     def fit(self, features_train, class_labels_train):
         # total number of rows
         n_rows = len(class_labels_train)
@@ -82,18 +85,17 @@ class OurRandomForrestClassifier:
                 samples_y = []
                 for i in xrange(int(size)):
                     # in each loop we append an random row of data to our samples list.
-                    index = randint(0, n_rows-1)
+                    index = randint(0, n_rows - 1)
                     samples_x.append(features_train[index])
                     samples_y.append(class_labels_train[index])
                 dt = OurDecisionTreeClassifier()
-                model = dt.fit(samples_x,samples_y)
+                model = dt.fit(samples_x, samples_y)
                 self.estimators.append(model)
-        else: #the definition of insanity, to do the same thing over and over again hoping for a different outcome
+        else:  # the definition of insanity, to do the same thing over and over again hoping for a different outcome
             for dt in xrange(self.n_estimators):
                 dt = OurDecisionTreeClassifier()
                 model = dt.fit(features_train, class_labels_train)
                 self.estimators.append(model)
-
 
     def predict(self, test_features):
         """ predict method takes in the test features and for each created estimators model
@@ -124,10 +126,11 @@ def nominate(votes):
 def from_frequency_to_probability(frequency_map):
     proba_list = []
 
-    total = sum(frequency_map)
-    for n_of_class in frequency_map:
-        proba_list.append((n_of_class/total))
+    total = sum(frequency_map.values())
+    for class_label in frequency_map:
+        proba_list.append((frequency_map[class_label] / total))
     return proba_list
+
 
 def run():
     data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
@@ -142,12 +145,16 @@ def run():
         )
 
     dtc.fit(train_features, train_labels)
-    test_prediction = dtc.predict(test_features)
-    compare_results(test_prediction, test_labels)
-    #probability_prediction = dtc.predictProb(test_features)
+    test_prediction = dtc.predictProb(test_features)
+    print(test_prediction)
+    """ FORTFARANDE FEL RESULTAT!!! """
+
+
+    # compare_results(test_prediction, test_labels)
+    # probability_prediction = dtc.predictProb(test_features)
     #
-    #print(probability_prediction)
-    #print(test_prediction)
+    # print(probability_prediction)
+    # print(test_prediction)
 
 
 def undress_num_py_arrays(arrays):
@@ -165,13 +172,14 @@ def run_forest_run():
             random_state=int(round(time.time()))
         )
 
-    train_features, test_features, train_labels, test_labels = undress_num_py_arrays([train_features, test_features, train_labels, test_labels])
+    train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
+        [train_features, test_features, train_labels, test_labels])
 
     rfc = OurRandomForrestClassifier(sample_size=0.3, n_estimators=100)
-    rfc.fit(train_features,train_labels)
+    rfc.fit(train_features, train_labels)
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
-run_forest_run()
 
-
+# run_forest_run()
+run()
