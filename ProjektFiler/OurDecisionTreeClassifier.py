@@ -8,7 +8,7 @@ from collections import defaultdict
 from scipy._lib.six import xrange
 
 from hunts_algorithm import start_hunts
-from prediction_node import predict, PredictionNode, get_classes_for_subject
+from prediction_node import predict, PredictionNode, get_classes_for_subject, compare_results
 from gini_index import Gini
 from sklearn.model_selection import train_test_split
 
@@ -42,14 +42,13 @@ class OurDecisionTreeClassifier:
         test_prediction = predict(self.model, test_features)
         return test_prediction
 
-    def predictProb(self, test_features):
+    def predictProb(self, test_features, roundToDecimal=None):
         # leaf_nodes = []
         # for node in test_features:S
         #    if not node.child_nodes:
         #        leaf_nodes.append(node)
-        class_frequency_maps = filter(lambda x: x is not None, [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in
-                                test_features])
-        return [from_frequency_to_probability(frequency_map) for frequency_map in class_frequency_maps]
+        class_frequency_maps = [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in test_features]
+        return [from_frequency_to_probability(frequency_map, roundToDecimal) for frequency_map in class_frequency_maps]
 
 
 class OurRandomForrestClassifier:
@@ -97,7 +96,6 @@ class OurRandomForrestClassifier:
                 model = dt.fit(features_train, class_labels_train)
                 self.estimators.append(model)
 
-
     def predict(self, test_features):
         """ predict method takes in the test features and for each created estimators model
             it runs the prediction algorithm on the test_features data.
@@ -124,16 +122,21 @@ def nominate(votes):
     return max(count, key=lambda i: count[i])
 
 
-def from_frequency_to_probability(frequency_map):
+def from_frequency_to_probability(frequency_map, roundToDecimal=None):
     proba_list = []
 
     total = sum(frequency_map.values())
     for class_label in frequency_map:
-        proba_list.append((frequency_map[class_label] / total))
+        probability = frequency_map[class_label] / total
+        if roundToDecimal is not None:
+            round(probability, roundToDecimal)
+        proba_list.append((class_label, probability))
     return proba_list
+
 
 def undress_num_py_arrays(arrays):
     return tuple([array.tolist() if type(array) == 'numpy.ndarray' else array for array in arrays])
+
 
 def run():
     data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
@@ -148,9 +151,11 @@ def run():
         )
 
     dtc.fit(train_features, train_labels)
-    test_prediction = dtc.predictProb(test_features)
-    print(test_prediction)
+    test_prediction = dtc.predictProb(test_features, 2)
+    for l in map(lambda x: list(map(lambda y: y[1], x)), test_prediction):
+        print(l)
     """ FORTFARANDE FEL RESULTAT!!! """
+
 
 
     # compare_results(test_prediction, test_labels)
@@ -158,6 +163,7 @@ def run():
     #
     # print(probability_prediction)
     # print(test_prediction)
+
 
 def run_forest_run():
     data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
@@ -174,10 +180,9 @@ def run_forest_run():
         [train_features, test_features, train_labels, test_labels])
 
     rfc = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)
-    rfc.fit(train_features,train_labels)
+    rfc.fit(train_features, train_labels)
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
-#run_forest_run()
-
-
+# run_forest_run()
+run()
