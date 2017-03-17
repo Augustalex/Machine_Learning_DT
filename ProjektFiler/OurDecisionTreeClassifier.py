@@ -35,7 +35,7 @@ class OurDecisionTreeClassifier:
         self.model = None
 
     def fit(self, features_train, class_labels_train):
-        self.model = start_hunts(features_train, class_labels_train)
+        self.model = start_hunts(features_train, class_labels_train, self.max_features)
         return self
 
     def predict(self, test_features):

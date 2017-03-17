@@ -7,7 +7,7 @@ from prediction_node import PredictionNode
 from record_subject import Subject, group_has_same_label, most_common_class_label
 
 
-def start_hunts(data_features, data_class_labels):
+def start_hunts(data_features, data_class_labels, max_features):
     subjects = [Subject(row, label) for row, label in zip(data_features, data_class_labels)]
 
     model = PredictionNode()
@@ -17,8 +17,8 @@ def start_hunts(data_features, data_class_labels):
 
     hunts(model, subjects, 0, min_samples_leaf, max_depth)
 
-    print("\nNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].class_features)))
-    print("Max depth: " + str(max_depth) + "\tMin samples leaf: " + str(min_samples_leaf) + "\n")
+    #print("\nNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].class_features)))
+    #print("Max depth: " + str(max_depth) + "\tMin samples leaf: " + str(min_samples_leaf) + "\n")
 
     return model
 
