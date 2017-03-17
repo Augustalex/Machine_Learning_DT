@@ -12,17 +12,13 @@ def start_hunts(data_features, data_class_labels):
 
     model = PredictionNode()
 
-    start = time.time()
-
     max_depth = None
     min_samples_leaf = 1
 
     hunts(model, subjects, 0, min_samples_leaf, max_depth)
-    end = time.time()
 
-    print("\nTime elapsed: " + str(end - start) + "s")
-    print("\tNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].class_features)))
-    print("\tMax depth: " + str(max_depth) + "\tMin samples leaf: " + str(min_samples_leaf) + "\n")
+    print("\nNumber of records: " + str(len(subjects)) + "\tNumber of features: " + str(len(subjects[0].class_features)))
+    print("Max depth: " + str(max_depth) + "\tMin samples leaf: " + str(min_samples_leaf) + "\n")
 
     return model
 
