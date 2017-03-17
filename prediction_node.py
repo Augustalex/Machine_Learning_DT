@@ -97,6 +97,15 @@ def get_classes_for_subject(model, subject):
             return generate_class_frequency_map(model.subjects)
 
 
+def compare_results(prediction, correct_result):
+    correct = 0
+    for i in range(len(prediction)):
+        if prediction[i] == correct_result[i]:
+            correct += 1
+
+    percentage = correct / len(prediction)
+    print("Correct to " + str(percentage * 100) + "%")
+
 
 def split_to_prediction_nodes(subjects, split_test):
     """ here we take care of the splitting of the
