@@ -51,10 +51,10 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
     # If a max_depth is defined and is smaller or equal to the current depth, end the recursion.
     # If the number of subjects is less or equal to the minimum number of subjects, end the recursion.
     if max_depth is not None and depth >= max_depth or len(subjects) <= min_samples_leaf:
-        parent_node.label = most_common_class_label(subjects)
+        create_leaf_node(parent_node, subjects)
     # If all subjects relate to the same class label, end the recursion.
     elif group_has_same_label(subjects):
-        parent_node.label = subjects[0].class_label
+        create_leaf_node(parent_node, subjects)
     else:
         """Constructs a test with the mean value of subjects
         current feature (feature_index), so we know where to split."""
@@ -72,8 +72,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
             at the parent_node.
         """
         if len(best_gini_split.split) <= 1:
-            parent_node.label = most_common_class_label(subjects)
-            parent_node.subjects = subjects
+            create_leaf_node(parent_node, subjects)
         else:
             # For all nodes in the chosen split (best_gini_split.split) run it through the hunts algorithm.
             for split_node in best_gini_split.split:
@@ -82,3 +81,8 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
                 else:
                     parent_node.child_nodes.append(split_node.node)
                     hunts(split_node.node, split_node.subjects, depth + 1)
+
+
+def create_leaf_node(node, subjects):
+    node.label = most_common_class_label(subjects)
+    node.subjects = subjects
