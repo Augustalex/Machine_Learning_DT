@@ -268,7 +268,7 @@ def start(data_set, rf_flag=False, max_features=None):
                                                 'Their average testing time': numpy.array(their_testing_time1).mean()},
                                                index=[0])
 
-    writer = pandas.ExcelWriter('balance-scale.xlsx', engine='xlsxwriter')
+    writer = pandas.ExcelWriter('breast-w.xlsx', engine='xlsxwriter')
 
     our_decision_tree_data.to_excel(writer, sheet_name='our dtc')
     their_decison_tree_data.to_excel(writer, sheet_name='their dtc')
@@ -277,4 +277,4 @@ def start(data_set, rf_flag=False, max_features=None):
 
     writer.save()
 
-start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\balance-scale.csv", header=None), rf_flag=True)
+start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\breast-w.csv", header=None), rf_flag=True)
