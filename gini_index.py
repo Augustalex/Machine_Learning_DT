@@ -7,8 +7,11 @@ SplitInformation = namedtuple('SplitInformation', ['split', 'index', 'test'])
 
 
 class Gini(Criterion):
-    @staticmethod
-    def calculate_node_index(subjects, split_test):
+
+    def __init__(self, max_features=None):
+        Criterion.__init__(self, max_features)
+
+    def calculate_node_index(self, subjects, split_test):
         # Perform split of subjects based on given test
         split_pairs = split_to_prediction_nodes(subjects, split_test)
 
@@ -23,8 +26,7 @@ class Gini(Criterion):
         # Return a tuple containing the split, gini_index and a test (which is needed to store in a node for prediction)
         return SplitInformation(split=split_pairs, index=gini_index, test=split_test)
 
-    @staticmethod
-    def select_candidate(candidates):
+    def select_candidate(self, candidates):
         return min(candidates, key=lambda x: x.index)
 
 

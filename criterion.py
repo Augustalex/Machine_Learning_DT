@@ -1,45 +1,58 @@
 from collections import defaultdict, namedtuple
+from random import randint
 
 SplitInformation = namedtuple('SplitInformation', ['split', 'index', 'test'])
 
 
 class Criterion:
-    @staticmethod
-    def calculate_node_index(subjects, split_test):
+    def __init__(self, max_features=None):
+        self.max_features = max_features
+
+    def calculate_node_index(self, subjects, split_test):
         pass
 
-    @staticmethod
-    def select_candidate(candidates):
+    def select_candidate(self, candidates):
         pass
 
+    def generate_best_split_of_all_features(self, subjects):
+        if len(subjects) == 0:
+            return SplitInformation([], 0, None)
 
-def generate_best_split_of_all_features(subjects, criterion):
-    if len(subjects) == 0:
-        return SplitInformation([], 0, None)
+        n_features = len(subjects[0].class_features)
+        chosen_feature_indices = self.select_n_random_feature_indices(n_features)
 
-    n_features = len(subjects[0].class_features)
+        # Generate best split of all best splits for each feature
+        # print("\n\t\tGenerating splits.")
+        candidates = [self.generate_best_split(subjects, feature_index) for feature_index in chosen_feature_indices]
 
-    # Generate best split of all best splits for each feature
-    # print("\n\t\tGenerating splits.")
-    candidates = [generate_best_split(subjects, feature_index, criterion) for feature_index in range(n_features)]
+        # Select the candidate with an index closest to 0
+        best_candidate = self.select_candidate(candidates)
+        # print("\t\tBest was: " + str(best_candidate.index) + "\n")
+        return best_candidate
 
-    # Select the candidate with an index closest to 0
-    best_candidate = criterion.select_candidate(candidates)
-    # print("\t\tBest was: " + str(best_candidate.index) + "\n")
-    return best_candidate
+    def generate_best_split(self, subjects, feature_index):
+        # Generate all possible binary splits for the given feature
+        test_permutations = generate_binary_split_test_permutations(subjects, feature_index)
 
+        # Calculate entropy gain for each generated split
+        candidates = [self.calculate_node_index(subjects, test) for test in test_permutations]
 
-def generate_best_split(subjects, feature_index, criterion):
-    # Generate all possible binary splits for the given feature
-    test_permutations = generate_binary_split_test_permutations(subjects, feature_index)
+        # Select the lowest index
+        best_candidate = self.select_candidate(candidates)
 
-    # Calculate entropy gain for each generated split
-    candidates = [criterion.calculate_node_index(subjects, test) for test in test_permutations]
+        return best_candidate
 
-    # Select the lowest index
-    best_candidate = criterion.select_candidate(candidates)
+    def select_n_random_feature_indices(self, n_features):
+        if self.max_features:
+            n_chosen_features = round(self.max_features * n_features)
+        else:
+            n_chosen_features = n_features
 
-    return best_candidate
+        features = [i for i in range(0, n_features)]
+        # TODO might be problematic with list comprehension (is it correct in syntax?)
+        chosen_feature_indices = [features.remove(randint(0, len(features)-1)) in range(0, n_chosen_features)]
+
+        return chosen_feature_indices
 
 
 def generate_class_frequency_map(subjects):
