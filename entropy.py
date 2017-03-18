@@ -6,9 +6,14 @@ from prediction_node import split_to_prediction_nodes
 """
     This is the Entropy class.
 """
+
+
 class Entropy(Criterion):
-    @staticmethod
-    def calculate_node_index(subjects, split_test):
+
+    def __init__(self, max_features=None):
+        Criterion.__init__(self, max_features)
+
+    def calculate_node_index(self, subjects, split_test):
         split_pairs = split_to_prediction_nodes(subjects, split_test)
 
         parent_entropy = calculate_node_entropy(subjects)
@@ -23,8 +28,7 @@ class Entropy(Criterion):
 
         return SplitInformation(split=split_pairs, index=information_gain, test=split_test)
 
-    @staticmethod
-    def select_candidate(candidates):
+    def select_candidate(self, candidates):
         return min(candidates, key=lambda x: x.index)
 
 

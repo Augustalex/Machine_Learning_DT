@@ -1,6 +1,5 @@
 import time
 
-from criterion import generate_best_split_of_all_features
 from entropy import Entropy
 from gini_index import Gini
 from prediction_node import PredictionNode
@@ -23,7 +22,7 @@ def start_hunts(data_features, data_class_labels, max_features):
     return model
 
 
-def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
+def hunts(parent_node, subjects, depth, min_samples_leaf, max_depth, criterion, max_features):
     # Base-Case: If there are no features left, then return.
 
     """
@@ -45,6 +44,8 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
     :param depth: Current recursive depth
     :param min_samples_leaf: Minimum number of subjects before the tree should be closed.
     :param max_depth: The maximum recursive depth before the tree should be closed.
+    :param criterion: The algorithm for use in rating splits. Choices are entropy and gini.
+    :param max_features: The percentage of features rated by the criterion at each split.
     :return: Nothing. The end result is stored in the original Parent Node, all through the recursion.
     """
 
@@ -60,7 +61,8 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
         current feature (feature_index), so we know where to split."""
 
         # Uses gini to generate the best split out of all features.
-        best_gini_split = generate_best_split_of_all_features(subjects, Gini)
+        criterion_executor = Gini(max_features) if criterion == 'gini' else Entropy(max_features)
+        best_gini_split = criterion_executor.generate_best_split_of_all_features(subjects)
 
         # Stores the test of the "best split" in the parent node, for future prediction with that node.
         parent_node.split_test = best_gini_split.test
@@ -80,7 +82,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf=10, max_depth=100):
                     pass
                 else:
                     parent_node.child_nodes.append(split_node.node)
-                    hunts(split_node.node, split_node.subjects, depth + 1)
+                    hunts(split_node.node, split_node.subjects, depth + 1, min_samples_leaf, max_depth, criterion, max_features)
 
 
 def create_leaf_node(node, subjects):
