@@ -2,7 +2,6 @@ import numpy
 import pandas
 import time
 
-import xlsxwriter
 from scipy.stats import wilcoxon
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
@@ -268,7 +267,7 @@ def start(data_set, rf_flag=False, max_features=None):
                                                 'Their average testing time': numpy.array(their_testing_time1).mean()},
                                                index=[0])
 
-    writer = pandas.ExcelWriter('breast-w.xlsx', engine='xlsxwriter')
+    writer = pandas.ExcelWriter('sonar.xlsx', engine='xlsxwriter')
 
     our_decision_tree_data.to_excel(writer, sheet_name='our dtc')
     their_decison_tree_data.to_excel(writer, sheet_name='their dtc')
@@ -277,4 +276,4 @@ def start(data_set, rf_flag=False, max_features=None):
 
     writer.save()
 
-start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\breast-w.csv", header=None), rf_flag=True)
+start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\sonar.csv", header=None), rf_flag=True)
