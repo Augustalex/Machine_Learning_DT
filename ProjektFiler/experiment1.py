@@ -9,6 +9,8 @@ from sklearn.tree import DecisionTreeClassifier
 
 from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, OurRandomForrestClassifier, \
     unzip_features_and_labels, undress_num_py_arrays
+from excelifyer import Excelifyer
+
 
 def get_labels(data):
     values = []
@@ -236,9 +238,9 @@ def start(data_set, rf_flag=False, max_features=None):
         print("Their average training time:", numpy.array(their_training_time1).mean())
         print("Their average testing time:", numpy.array(their_testing_time1).mean())
 
-    w = wilcoxon(aucs2, aucs1)
+    #w = wilcoxon(aucs2, aucs1)
     #w2 = wilcoxon(aucs1, aucs2)
-    print("\n", w)
+    #print("\n", w)
 
     our_decision_tree_data = pandas.DataFrame({'Our average accuracy': numpy.array(accuracies1).mean(),
                            'Our average precision': numpy.array(precisions1).mean(),
@@ -267,14 +269,14 @@ def start(data_set, rf_flag=False, max_features=None):
                                                 'Their average testing time': numpy.array(their_testing_time1).mean()},
                                                index=[0])
 
-    writer = pandas.ExcelWriter('sonar.xlsx', engine='xlsxwriter')
+    writer = pandas.ExcelWriter('diabetes.xlsx', engine='xlsxwriter')
 
     our_decision_tree_data.to_excel(writer, sheet_name='our dtc')
     their_decison_tree_data.to_excel(writer, sheet_name='their dtc')
     our_random_forest_data.to_excel(writer, sheet_name='our rf')
     their_random_forest_data.to_excel(writer, sheet_name='their rf')
 
-    #writer.save()
+    writer.save()
 
 def wilcoxon_test(data_file):
     odtc = OurDecisionTreeClassifier()
@@ -323,6 +325,12 @@ def wilcoxon_test(data_file):
     print("\nDecisionTreeClassifiers:", w_dtc)
     print("\nRandomForestClassifiers", w_rf)
 
-#start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\sonar.csv", header=None), rf_flag=True)
+    doc = Excelifyer(use_column_headers=False)
+    doc.at_row(0, 'headers', ['statistic', 'pvalues'])
+    doc.at_row(1, 'DecisionTreeClassifiers', w_dtc)
+    doc.at_row(2, 'RandomForestClassifiers', w_rf)
+    doc.to_excel('iris_wilcoxon.xlsx')
 
-wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None))
+#start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None), rf_flag=True)
+
+wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_multi\multi\iris.csv", header=None))
