@@ -9,8 +9,8 @@ from ProjektFiler.experiment1 import accuracy_test, our_auc_score, our_recall_sc
 from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, OurRandomForrestClassifier, \
     unzip_features_and_labels, undress_num_py_arrays
 
-
-def conduct_experiment_2():
+# Maybe have de optimized classifiers as parameters?
+def test_optimized_classifiers():
     all_classifiers = []
     # K-nearest neighbour
     knn = KNeighborsClassifier(n_neighbors=5, weights='uniform', algorithm='auto', leaf_size=30, p=2,
@@ -34,7 +34,10 @@ def conduct_experiment_2():
 
     all_classifiers.append([knn, rfc, dtc, odtc, orfc])
 
+    # Excel file
     writer = pandas.ExcelWriter('experiment2.xlsx', engine='xlsxwriter')
+
+    # Parameter optimalixation here? process here?
 
     # After fitting
     for classifier in all_classifiers:
@@ -57,6 +60,7 @@ def conduct_experiment_2():
             aucscores.append(auc)
             accuracies.append(acc)
 
+        # For debugging
         print("Average accuracy:", numpy.array(accuracies).mean())
         print("Average precision:", numpy.array(precisions).mean())
         print("Average recall:", numpy.array(recalls).mean())
