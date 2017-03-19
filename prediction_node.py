@@ -67,9 +67,10 @@ def predict(model, test_subjects):
 
 
 def get_class_for_subject(model, subject):
-    if not model.label:
+    if model.label is None:
         return get_class_for_subject(
-            model.get_child_from_test(subject), subject
+            model.get_child_from_test(subject),
+            subject
         )
     else:
         return model.label

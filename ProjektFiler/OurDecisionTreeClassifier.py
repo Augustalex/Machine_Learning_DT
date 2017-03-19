@@ -7,7 +7,6 @@ import time
 from collections import defaultdict
 from scipy._lib.six import xrange
 
-from hunts_algorithm import start_hunts
 from prediction_node import predict, PredictionNode, get_classes_for_subject, compare_results
 from gini_index import Gini
 from sklearn.model_selection import train_test_split
@@ -35,7 +34,7 @@ class OurDecisionTreeClassifier:
         self.model = None
 
     def fit(self, features_train, class_labels_train):
-        self.model = start_hunts(features_train, class_labels_train, self.max_features)
+        self.model = start_hunts(features_train, class_labels_train)
         return self
 
     def predict(self, test_features):
@@ -139,8 +138,8 @@ def undress_num_py_arrays(arrays):
 
 
 def run():
-    data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
-    dtc = OurDecisionTreeClassifier()
+    data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\labor.csv", header=None)
+    dtc = OurDecisionTreeClassifier(max_features=None, min_sample_leaf=10)
     data = pandas.np.array(data)
     features_, labels_ = unzip_features_and_labels(data)
     train_features, test_features, train_labels, test_labels = \
@@ -151,9 +150,13 @@ def run():
         )
 
     dtc.fit(train_features, train_labels)
-    test_prediction = dtc.predictProb(test_features, 2)
-    for l in map(lambda x: list(map(lambda y: y[1], x)), test_prediction):
-        print(l)
+    test_prediction = dtc.predict(test_features)
+
+    print(len(test_prediction))
+    print(len(test_labels))
+    compare_results(test_prediction, test_labels)
+    # for l in map(lambda x: x, test_prediction):
+    #     print(l)
     """ FORTFARANDE FEL RESULTAT!!! """
 
 
@@ -185,4 +188,4 @@ def run_forest_run():
     compare_results(test_prediction, test_labels)
 
 # run_forest_run()
-#run()
+run()
