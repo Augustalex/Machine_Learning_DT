@@ -53,7 +53,7 @@ class OurDecisionTreeClassifier:
 
 
 class OurRandomForrestClassifier:
-    def __init__(self, sample_size, n_estimators, max_features=None, criterion=Gini, max_depth=None, min_sample_leaf=1,
+    def __init__(self, sample_size, n_estimators, max_features=None, criterion="gini", max_depth=None, min_sample_leaf=1,
                  bagging=True):
         # criterion: gini or entropy
         self.criterion = criterion
@@ -190,4 +190,4 @@ def run_forest_run():
     compare_results(test_prediction, test_labels)
 
 # run_forest_run()
-run()
+#run()

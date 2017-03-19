@@ -236,9 +236,9 @@ def start(data_set, rf_flag=False, max_features=None):
         print("Their average training time:", numpy.array(their_training_time1).mean())
         print("Their average testing time:", numpy.array(their_testing_time1).mean())
 
-    #w = wilcoxon(aucs2, aucs1)
+    w = wilcoxon(aucs2, aucs1)
     #w2 = wilcoxon(aucs1, aucs2)
-    #print("\n", w, w2)
+    print("\n", w)
 
     our_decision_tree_data = pandas.DataFrame({'Our average accuracy': numpy.array(accuracies1).mean(),
                            'Our average precision': numpy.array(precisions1).mean(),
@@ -274,6 +274,55 @@ def start(data_set, rf_flag=False, max_features=None):
     our_random_forest_data.to_excel(writer, sheet_name='our rf')
     their_random_forest_data.to_excel(writer, sheet_name='their rf')
 
-    writer.save()
+    #writer.save()
 
-start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\sonar.csv", header=None), rf_flag=True)
+def wilcoxon_test(data_file):
+    odtc = OurDecisionTreeClassifier()
+    tdtc = DecisionTreeClassifier()
+    orf = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)
+    trf = RandomForestClassifier(n_estimators=11)
+
+
+    our_accuracy_dtc_array = []
+    our_accuracy_rf_array = []
+    their_accuracy_dtc_array = []
+    their_accuracy_rf_array = []
+
+
+    for i in range(20):
+        data_set = pandas.np.array(data_file)
+        features_, labels_ = unzip_features_and_labels(data_set)
+        train_features, test_features, train_labels, test_labels = \
+            train_test_split(
+                features_, labels_,
+                test_size=0.1,
+                random_state=int(round(time.time()))
+            )
+
+        odtc.fit(train_features, train_labels)
+        tdtc.fit(train_features, train_labels)
+        orf.fit(train_features, train_labels)
+        trf.fit(train_features, train_labels.ravel())
+        pre1 = odtc.predict(test_features)
+        pre2 = tdtc.predict(test_features)
+        pre3 = orf.predict(test_features)
+        pre4 = trf.predict(test_features)
+        our_accuracy_dtc_array.append(accuracy_test(pre1,test_labels))
+        their_accuracy_dtc_array.append(accuracy_test(pre2, test_labels))
+        our_accuracy_rf_array.append(accuracy_test(pre3, test_labels))
+        their_accuracy_rf_array.append(accuracy_test(pre4, test_labels))
+
+    print(our_accuracy_dtc_array)
+    print(their_accuracy_dtc_array)
+    w_dtc = wilcoxon(our_accuracy_dtc_array, their_accuracy_dtc_array)
+    print("-----------------------------------------------------------")
+    print(our_accuracy_rf_array)
+    print(their_accuracy_rf_array)
+    w_rf = wilcoxon(our_accuracy_rf_array, their_accuracy_rf_array)
+
+    print("\nDecisionTreeClassifiers:", w_dtc)
+    print("\nRandomForestClassifiers", w_rf)
+
+#start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\sonar.csv", header=None), rf_flag=True)
+
+wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None))
