@@ -7,6 +7,7 @@ import time
 from collections import defaultdict
 from scipy._lib.six import xrange
 
+from hunts_algorithm import start_hunts, hunts
 from prediction_node import predict, PredictionNode, get_classes_for_subject, compare_results
 from gini_index import Gini
 from sklearn.model_selection import train_test_split
@@ -26,15 +27,16 @@ def unzip_features_and_labels(data):
 
 
 class OurDecisionTreeClassifier:
-    def __init__(self, criterion=Gini, max_features=None, max_depth=None, min_sample_leaf=1):
+    def __init__(self, criterion='gini', max_features=None, max_depth=None, min_sample_leaf=1):
         self.criterion = criterion
         self.max_features = max_features
         self.max_depth = max_depth
         self.min_sample_leaf = min_sample_leaf
-        self.model = None
+        self.model = PredictionNode()
 
     def fit(self, features_train, class_labels_train):
-        self.model = start_hunts(features_train, class_labels_train)
+        subjects = [Subject(row, label) for row, label in zip(features_train, class_labels_train)]
+        hunts(self.model, subjects, 0, self.min_sample_leaf, self.max_depth, self.criterion, self.max_features)
         return self
 
     def predict(self, test_features):
