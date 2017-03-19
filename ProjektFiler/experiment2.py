@@ -10,6 +10,12 @@ from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, Ou
     unzip_features_and_labels, undress_num_py_arrays
 
 # Maybe have de optimized classifiers as parameters?
+"""
+    This function is used to compare the optimized classifiers and write their result to an excel document.
+    It loops through all the classifiers and conducts N predictions and averages them to be able to give an
+    overall value. The metrics tested are: Accuracy, precision, recalls and AUC.
+"""
+
 def test_optimized_classifiers():
     all_classifiers = []
     # K-nearest neighbour
