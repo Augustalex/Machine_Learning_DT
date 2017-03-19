@@ -325,4 +325,4 @@ def wilcoxon_test(data_file):
 
 #start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\sonar.csv", header=None), rf_flag=True)
 
-wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None))
+#wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None))
