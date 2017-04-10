@@ -1,5 +1,7 @@
+import math
 from collections import defaultdict, namedtuple
 from random import randint
+from node_and_record import split_to_prediction_nodes, generate_class_frequency_map
 
 SplitInformation = namedtuple('SplitInformation', ['split', 'index', 'test'])
 
@@ -55,16 +57,6 @@ class Criterion:
         return chosen_feature_indices
 
 
-def generate_class_frequency_map(subjects):
-    # A dictionary which entries is automatically set to 0 when first assigned a value
-    class_frequency = defaultdict(int)
-    # For each class label found in a subject increase its entry in the dictionary by 1.
-    for subject in subjects:
-        class_frequency[subject.class_label[0]] += 1
-
-    return class_frequency
-
-
 def generate_binary_split_test_permutations(subjects, feature_index):
     """
         Generates all possible binary splits from a given set of subjects
@@ -77,3 +69,78 @@ def generate_binary_split_test_permutations(subjects, feature_index):
         lambda x: x.class_features[feature_index] <= subject.class_features[feature_index]
         for subject in subjects
         ]
+
+"""
+    This is the Entropy class.
+"""
+
+
+class Entropy(Criterion):
+
+    def __init__(self, max_features=None):
+        Criterion.__init__(self, max_features)
+
+    def calculate_node_index(self, subjects, split_test):
+        split_pairs = split_to_prediction_nodes(subjects, split_test)
+
+        parent_entropy = calculate_node_entropy(subjects)
+
+        children_entropy = 0
+        for child in split_pairs:
+            subject_dist = (len(child.subjects) / len(subjects))
+            child_entropy = calculate_node_entropy(child.subjects)
+            children_entropy += subject_dist * child_entropy
+
+        information_gain = parent_entropy - children_entropy
+
+        return SplitInformation(split=split_pairs, index=information_gain, test=split_test)
+
+    def select_candidate(self, candidates):
+        return min(candidates, key=lambda x: x.index)
+
+
+def calculate_node_entropy(subjects):
+    frequency_map = generate_class_frequency_map(subjects)
+
+    entropy = 0
+    for subject_class in frequency_map.keys():
+        prob = frequency_map[subject_class] / len(subjects)
+        entropy -= prob / (math.log(prob, 2))
+
+    return entropy
+
+
+class Gini(Criterion):
+
+    def __init__(self, max_features=None):
+        Criterion.__init__(self, max_features)
+
+    def calculate_node_index(self, subjects, split_test):
+        # Perform split of subjects based on given test
+        split_pairs = split_to_prediction_nodes(subjects, split_test)
+
+        # Generate Gini Index for split based on Gini Index Algorithm
+        n_parent_subjects = len(subjects)
+        gini_index = 0
+        for child in split_pairs:
+            child_gini = child_gini_index(child.subjects)
+
+            gini_index += (len(child.subjects) / n_parent_subjects) * child_gini
+
+        # Return a tuple containing the split, gini_index and a test (which is needed to store in a node for prediction)
+        return SplitInformation(split=split_pairs, index=gini_index, test=split_test)
+
+    def select_candidate(self, candidates):
+        return min(candidates, key=lambda x: x.index)
+
+
+def child_gini_index(subjects):
+    # A dictionary containing how frequently a class label occurs amongst the subjects.
+    class_frequency_map = generate_class_frequency_map(subjects)
+
+    # Generate child node Gini Index based on Gini Index algorithm
+    gini_index = 1
+    for class_key in class_frequency_map.keys():
+        gini_index -= (class_frequency_map[class_key] / len(subjects)) ** 2
+
+    return gini_index

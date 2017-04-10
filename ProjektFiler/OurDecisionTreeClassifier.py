@@ -8,11 +8,9 @@ from collections import defaultdict
 from scipy._lib.six import xrange
 
 from hunts_algorithm import start_hunts, hunts
-from prediction_node import predict, PredictionNode, get_classes_for_subject, compare_results
-from gini_index import Gini
+from node_and_record import predict, PredictionNode, get_classes_for_subject, compare_results, Subject
 from sklearn.model_selection import train_test_split
 
-from record_subject import Subject
 
 
 def parse_integer_table(data):
@@ -189,5 +187,3 @@ def run_forest_run():
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
-# run_forest_run()
-#run()
