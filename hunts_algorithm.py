@@ -1,7 +1,7 @@
 import time
 
 from criterion import Gini, Entropy
-from node_and_record import Subject, group_has_same_label, most_common_class_label, PredictionNode
+from Tree import Subject, group_has_same_label, most_common_class_label, PredictionNode
 
 
 def start_hunts(data_features, data_class_labels, max_features):

@@ -1,7 +1,7 @@
 import math
 from collections import defaultdict, namedtuple
 from random import randint
-from node_and_record import split_to_prediction_nodes, generate_class_frequency_map
+from Tree import split_to_prediction_nodes, generate_class_frequency_map
 
 SplitInformation = namedtuple('SplitInformation', ['split', 'index', 'test'])
 

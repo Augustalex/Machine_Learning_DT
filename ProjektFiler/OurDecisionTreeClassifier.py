@@ -8,7 +8,7 @@ from collections import defaultdict
 from scipy._lib.six import xrange
 
 from hunts_algorithm import start_hunts, hunts
-from node_and_record import predict, PredictionNode, get_classes_for_subject, compare_results, Subject
+from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject
 from sklearn.model_selection import train_test_split
 
 
