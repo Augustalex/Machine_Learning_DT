@@ -333,4 +333,4 @@ def wilcoxon_test(data_file):
 
 #start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None), rf_flag=True)
 
-wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_multi\multi\iris.csv", header=None))
+#wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_multi\multi\iris.csv", header=None))

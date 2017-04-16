@@ -42,10 +42,6 @@ class OurDecisionTreeClassifier:
         return test_prediction
 
     def predictProb(self, test_features, roundToDecimal=None):
-        # leaf_nodes = []
-        # for node in test_features:S
-        #    if not node.child_nodes:
-        #        leaf_nodes.append(node)
         class_frequency_maps = [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in test_features]
         return [from_frequency_to_probability(frequency_map, roundToDecimal) for frequency_map in class_frequency_maps]
 

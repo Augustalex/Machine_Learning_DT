@@ -42,3 +42,4 @@ def iterate(featureSets, labels):
     dtc.fit(train_features, train_labels)
     predictions = dtc.predict(test_features)
     return accuracy_test(predictions, test_labels)
+
