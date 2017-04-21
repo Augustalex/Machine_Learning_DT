@@ -329,8 +329,8 @@ def wilcoxon_test(data_file):
     doc.at_row(0, 'headers', ['statistic', 'pvalues'])
     doc.at_row(1, 'DecisionTreeClassifiers', w_dtc)
     doc.at_row(2, 'RandomForestClassifiers', w_rf)
-    doc.to_excel('iris_wilcoxon.xlsx')
+    doc.to_excel('test.xlsx')
 
 #start(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None), rf_flag=True)
 
-wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_multi\multi\iris.csv", header=None))
+#wilcoxon_test(pandas.read_csv(r"..\ILS Projekt Dataset\csv_multi\multi\iris.csv", header=None))

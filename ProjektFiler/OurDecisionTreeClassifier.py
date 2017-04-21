@@ -8,11 +8,9 @@ from collections import defaultdict
 from scipy._lib.six import xrange
 
 from hunts_algorithm import start_hunts, hunts
-from prediction_node import predict, PredictionNode, get_classes_for_subject, compare_results
-from gini_index import Gini
+from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject
 from sklearn.model_selection import train_test_split
 
-from record_subject import Subject
 
 
 def parse_integer_table(data):
@@ -44,10 +42,6 @@ class OurDecisionTreeClassifier:
         return test_prediction
 
     def predictProb(self, test_features, roundToDecimal=None):
-        # leaf_nodes = []
-        # for node in test_features:S
-        #    if not node.child_nodes:
-        #        leaf_nodes.append(node)
         class_frequency_maps = [get_classes_for_subject(self.model, Subject(test_feature)) for test_feature in test_features]
         return [from_frequency_to_probability(frequency_map, roundToDecimal) for frequency_map in class_frequency_maps]
 
@@ -189,5 +183,3 @@ def run_forest_run():
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
-# run_forest_run()
-#run()
