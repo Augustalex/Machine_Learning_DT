@@ -55,8 +55,8 @@ class Criterion:
         for i in range(0, n_chosen_features):
             index = randint(0, len(features) - 1)
             chosen_feature_indices.append(features[index])
-            features.remove(index)
-        # TODO might be problematic with list comprehension (is it correct in syntax?)
+            del features[index]
+
         # chosen_feature_indices = [features.remove(randint(0, len(features)-1)) in range(0, n_chosen_features)]
 
         return chosen_feature_indices

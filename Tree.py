@@ -201,3 +201,31 @@ def print_tree_recursive(tree, acc):
         output += ')'
 
     return acc + output
+
+def print_extreme(tree, acc):
+    acc += '└── ' + str(tree.split_value)
+    if len(tree.child_nodes) == 0:
+        acc += '└── '
+        for subject in tree.subjects:
+            acc += '├── ' + subject.get_as_string() + ', '
+        acc += ')'
+
+    for node in tree.child_nodes:
+        acc += '├── ' + str(node.split_value)
+        acc += print_tree_recursive(node, acc)
+        acc += ')'
+
+class PrintTree:
+
+    def __init__(self, depth, node):
+        self.underlings = PrintTree.count_underlings(node)
+        self.depth = 0
+
+    @staticmethod
+    def count_underlings(node):
+        count = len(node.child_nodes)
+
+        for child in node.child_nodes:
+            count += PrintTree.count_underlings(child)
+
+        return count
