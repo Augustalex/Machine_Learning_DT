@@ -197,7 +197,7 @@ def print_tree_recursive(tree, acc):
 
     for node in tree.child_nodes:
         output += '( ' + str(node.split_value) + ': '
-        print_tree_recursive(node, acc + output)
+        output += print_tree_recursive(node, '')
         output += ')'
 
     return acc + output

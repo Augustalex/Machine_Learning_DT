@@ -48,11 +48,16 @@ class Criterion:
         if self.max_features:
             n_chosen_features = round(self.max_features * n_features)
         else:
-            n_chosen_features = n_features
+            return [i for i in range(0, n_features)]
 
         features = [i for i in range(0, n_features)]
+        chosen_feature_indices = []
+        for i in range(0, n_chosen_features):
+            index = randint(0, len(features) - 1)
+            chosen_feature_indices.append(features[index])
+            features.remove(index)
         # TODO might be problematic with list comprehension (is it correct in syntax?)
-        chosen_feature_indices = [features.remove(randint(0, len(features)-1)) in range(0, n_chosen_features)]
+        # chosen_feature_indices = [features.remove(randint(0, len(features)-1)) in range(0, n_chosen_features)]
 
         return chosen_feature_indices
 

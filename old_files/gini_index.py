@@ -1,7 +1,7 @@
 from collections import namedtuple
 
+from Tree import split_to_prediction_nodes
 from criterion import generate_class_frequency_map, Criterion
-from prediction_node import split_to_prediction_nodes
 
 SplitInformation = namedtuple('SplitInformation', ['split', 'index', 'test'])
 

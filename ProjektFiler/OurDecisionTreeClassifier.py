@@ -179,3 +179,4 @@ def run_forest_run():
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
+run()
