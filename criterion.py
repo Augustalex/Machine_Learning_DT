@@ -53,7 +53,10 @@ class Criterion:
         features = [i for i in range(0, n_features)]
         chosen_feature_indices = []
         for i in range(0, n_chosen_features):
-            index = randint(0, len(features) - 1)
+            if len(features) - 1 is not 0:
+                index = randint(0, len(features) - 1)
+            else:
+                break
             chosen_feature_indices.append(features[index])
             del features[index]
 
