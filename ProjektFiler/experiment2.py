@@ -8,7 +8,7 @@ from sklearn.tree import DecisionTreeClassifier
 from ProjektFiler.experiment1 import accuracy_test, our_auc_score, our_recall_score, our_precision_score
 
 from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, OurRandomForrestClassifier, \
-    unzip_features_and_labels, undress_num_py_arrays
+    unzip_features_and_labels, flatten_num_py_arrays
 
 # Maybe have de optimized classifiers as parameters?
 from excelifyer import Excelifyer
@@ -101,7 +101,7 @@ def simple_grid_search(data_set, file_name):
             random_state=int(round(time.time()))
         )
     # un-numpy the arrays before predicting
-    train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
+    train_features, test_features, train_labels, test_labels = flatten_num_py_arrays(
         [train_features, test_features, train_labels, test_labels])
 
     algorithmResults = {}

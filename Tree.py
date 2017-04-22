@@ -7,12 +7,16 @@ class Subject:
         It contains several features (represents the columns of the data)
         and a class label.
     """
+
     def __init__(self, features, class_label=None):
         self.class_label = class_label
         self.class_features = features
 
     def print(self):
         print("Subject [ class: " + str(self.class_label) + " ]")
+
+    def get_as_string(self):
+        return '[ ' + str((self.class_label[0] if len(self.class_label[0]) > 1 else self.class_label)) + ' ]'
 
 
 def group_has_same_label(subjects):
@@ -167,11 +171,33 @@ def split_to_prediction_nodes(subjects, split_test):
         for test_result in splits.keys()
         ]
 
+
 def generate_class_frequency_map(subjects):
-    # A dictionary which entries is automatically set to 0 when first assigned a value
+    # A dictionary which entries are automatically set to 0 when first assigned a value
     class_frequency = defaultdict(int)
     # For each class label found in a subject increase its entry in the dictionary by 1.
     for subject in subjects:
         class_frequency[subject.class_label[0]] += 1
 
     return class_frequency
+
+
+def print_tree(tree):
+    output = print_tree_recursive(tree, '')
+    print(output)
+
+
+def print_tree_recursive(tree, acc):
+    output = ''
+    if len(tree.child_nodes) == 0:
+        output += '( LEAF: '
+        for subject in tree.subjects:
+            output += subject.get_as_string() + ', '
+        output += ')'
+
+    for node in tree.child_nodes:
+        output += '( ' + str(node.split_value) + ': '
+        print_tree_recursive(node, acc + output)
+        output += ')'
+
+    return acc + output

@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
 from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, OurRandomForrestClassifier, \
-    unzip_features_and_labels, undress_num_py_arrays
+    unzip_features_and_labels, flatten_num_py_arrays
 from excelifyer import Excelifyer
 
 
@@ -136,7 +136,7 @@ def start(data_set, rf_flag=False, max_features=None):
                 random_state=int(round(time.time()))
             )
         # un-numpy the arrays before predicting
-        train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
+        train_features, test_features, train_labels, test_labels = flatten_num_py_arrays(
             [train_features, test_features, train_labels, test_labels])
         # train and test our tree
         start_our_fit = time.time()

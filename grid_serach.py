@@ -1,10 +1,9 @@
 import time
-from collections import namedtuple
-
 import numpy as np
 import pandas
-from sklearn.model_selection import train_test_split
 
+from collections import namedtuple
+from sklearn.model_selection import train_test_split
 from ProjektFiler.OurDecisionTreeClassifier import OurDecisionTreeClassifier, unzip_features_and_labels
 from ProjektFiler.experiment1 import accuracy_test
 from excelifyer import Excelifyer
@@ -30,8 +29,8 @@ class ClassifierFactory:
     def set_parameter_iterator(self, parameter_iterator):
         self.parameters = parameter_iterator
 
-    def make_classifier(self):
-        return self.factory(self.parameters.currentParameters)
+    def make_classifier(self, params):
+        return self.factory(params)
 
 
 class Position:
@@ -41,22 +40,19 @@ class Position:
 
 
 class Parameters:
-    def __init__(self, nextIteration, position):
-        self.currentParameters = nextIteration()
-        self._nextIteration = nextIteration
-        self.position = position
+    def __init__(self, n_iterations, start_params, steps):
+        self.n_iterations = n_iterations
+        self.start_params = start_params
+        self.steps = steps
 
     def __iter__(self):
-        """
-            Returns generator that iterates over the parameters via
-            the given 'nextIteration' function. It then yields
-            the current position of the parameters in the
-            iteration matrix.                                   """
-        # return self._nextIteration()
-
-        for permutation in self._nextIteration():
-            self.currentParameters = permutation
-            yield (self.position(self.currentParameters), self.currentParameters)
+        params = self.start_params
+        steps = self.steps
+        for x in range(0, self.n_iterations):
+            for y in range(0, self.n_iterations):
+                updated_parameters = (params[0] + steps[0] * y, params[1] + steps[1] * x)
+                position = Position(round(updated_parameters[0] / steps[0]), round(updated_parameters[1] / steps[1]))
+                yield (position, updated_parameters)
 
 
 def grid_search(dtcFactory):
@@ -70,7 +66,7 @@ def grid_search(dtcFactory):
         print(position.x, position.y)
         output.set_row_header(position.y, 'MF ' + str(parameters[1]))
         output.set_column_header(position.x, 'MSL ' + str(parameters[0]))
-        classifier = dtcFactory.make_classifier()
+        classifier = dtcFactory.make_classifier(parameters)
         mean_accuracy = mean_test_suite(data, classifier, 10)
         output.at_cell(position.x, position.y, mean_accuracy)
 
@@ -97,7 +93,7 @@ def iterate(data_set, classifier):
 
 
 def test_case():
-    data = pandas.read_csv(r"ILS Projekt Dataset\csv_binary\binary\tic-tac-toe.csv", header=None)
+    data = pandas.read_csv(r"ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
     data = pandas.np.array(data)
     features, labels = unzip_features_and_labels(data)
 
@@ -110,24 +106,15 @@ def test_case():
     min_sample_leafs = 1
     min_sample_leafs_step = 10
 
-    iterations = 10
+    iterations = 2
 
-    parameter_iterator = Parameters(
-        nextIteration=iterate_function([max_features, min_sample_leafs], [max_features_step, min_sample_leafs_step], iterations),
-        position=lambda params: Position(round(params[0] / max_features_step), round(params[1] / min_sample_leafs_step))
-    )
+    parameter_iterator = Parameters(iterations, [max_features, min_sample_leafs],
+                                    [max_features_step, min_sample_leafs_step])
 
     fac.set_parameter_iterator(parameter_iterator)
-    fac.set_classifier_factory(lambda params: OurDecisionTreeClassifier(max_features=params[0], min_sample_leaf=params[1]))
+    fac.set_classifier_factory(
+        lambda params: OurDecisionTreeClassifier(max_features=params[0], min_sample_leaf=params[1]))
     grid_search(fac)
 
-
-def iterate_function(params, steps, iterations):
-    def generator():
-        for x in range(0, iterations):
-            for y in range(0, iterations):
-                yield (params[0] + steps[0] * y, params[1] + steps[1] * x)
-
-    return generator
 
 test_case()

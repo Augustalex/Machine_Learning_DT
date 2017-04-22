@@ -8,7 +8,7 @@ from collections import defaultdict
 from scipy._lib.six import xrange
 
 from hunts_algorithm import start_hunts, hunts
-from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject
+from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject, print_tree
 from sklearn.model_selection import train_test_split
 
 
@@ -129,13 +129,13 @@ def from_frequency_to_probability(frequency_map, roundToDecimal=None):
     return proba_list
 
 
-def undress_num_py_arrays(arrays):
+def flatten_num_py_arrays(arrays):
     return tuple([array.tolist() if type(array) == 'numpy.ndarray' else array for array in arrays])
 
 
 def run():
-    data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\labor.csv", header=None)
-    dtc = OurDecisionTreeClassifier(max_features=None, min_sample_leaf=10)
+    data = pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\diabetes.csv", header=None)
+    dtc = OurDecisionTreeClassifier()
     data = pandas.np.array(data)
     features_, labels_ = unzip_features_and_labels(data)
     train_features, test_features, train_labels, test_labels = \
@@ -146,11 +146,7 @@ def run():
         )
 
     dtc.fit(train_features, train_labels)
-    test_prediction = dtc.predict(test_features)
-
-    print(len(test_prediction))
-    print(len(test_labels))
-    compare_results(test_prediction, test_labels)
+    print_tree(dtc.model)
     # for l in map(lambda x: x, test_prediction):
     #     print(l)
     """ FORTFARANDE FEL RESULTAT!!! """
@@ -175,7 +171,7 @@ def run_forest_run():
             random_state=int(round(time.time()))
         )
 
-    train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
+    train_features, test_features, train_labels, test_labels = flatten_num_py_arrays(
         [train_features, test_features, train_labels, test_labels])
 
     rfc = OurRandomForrestClassifier(sample_size=0.3, n_estimators=11)

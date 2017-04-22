@@ -76,9 +76,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf, max_depth, criterion, 
         else:
             # For all nodes in the chosen split (best_gini_split.split) run it through the hunts algorithm.
             for split_node in best_gini_split.split:
-                if len(split_node.subjects) == 0:
-                    pass
-                else:
+                if len(split_node.subjects) != 0:
                     parent_node.child_nodes.append(split_node.node)
                     hunts(split_node.node, split_node.subjects, depth + 1, min_samples_leaf, max_depth, criterion, max_features)
 
