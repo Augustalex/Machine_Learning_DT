@@ -123,7 +123,7 @@ def simple_grid_search(data_set, file_name):
     doc.to_excel('gridSearchRanking' + file_name + '.xlsx')
 
 
-simple_grid_search(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\balance-scale.csv", header=None), 'balance-scale')
+simple_grid_search(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None), 'hepatitis')
 
 """
 data_set = pandas.np.array(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\balance-scale.csv", header=None))
