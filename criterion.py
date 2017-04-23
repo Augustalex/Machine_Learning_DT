@@ -25,7 +25,7 @@ class Criterion:
 
         # Generate best split of all best splits for each feature
         # print("\n\t\tGenerating splits.")
-        candidates = [self.generate_best_split(subjects, feature_index) for feature_index in chosen_feature_indices]
+        candidates = [(self.generate_best_split(subjects, feature_index), feature_index) for feature_index in chosen_feature_indices]
 
         # Select the candidate with an index closest to 0
         best_candidate = self.select_candidate(candidates)
@@ -139,7 +139,14 @@ class Gini(Criterion):
         return SplitInformation(split=split_pairs, index=gini_index, test=split_test)
 
     def select_candidate(self, candidates):
-        return min(candidates, key=lambda x: x.index)
+        # Please look away
+        def get_gini_index(candidate):
+            if len(candidate) == 2:
+                return candidate[0].index
+            else:
+                return candidate.index
+
+        return min(candidates, key=lambda x: get_gini_index(x))
 
 
 def child_gini_index(subjects):

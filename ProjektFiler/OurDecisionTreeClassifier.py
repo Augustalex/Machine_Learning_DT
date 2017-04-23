@@ -7,7 +7,7 @@ import time
 from collections import defaultdict
 from scipy._lib.six import xrange
 
-from hunts_algorithm import start_hunts, hunts
+from hunts_algorithm import hunts
 from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject, print_tree_vertical
 from sklearn.model_selection import train_test_split
 
@@ -178,4 +178,4 @@ def run_forest_run():
     test_prediction = rfc.predict(test_features)
     compare_results(test_prediction, test_labels)
 
-#run()
+run()

@@ -60,7 +60,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf, max_depth, criterion, 
 
         # Uses gini to generate the best split out of all features.
         criterion_executor = Gini(max_features) if criterion == 'gini' else Entropy(max_features)
-        best_gini_split = criterion_executor.generate_best_split_of_all_features(subjects)
+        best_gini_split, split_feature_index = criterion_executor.generate_best_split_of_all_features(subjects)
 
         # Stores the test of the "best split" in the parent node, for future prediction with that node.
         parent_node.split_test = best_gini_split.test
@@ -78,6 +78,7 @@ def hunts(parent_node, subjects, depth, min_samples_leaf, max_depth, criterion, 
             for split_node in best_gini_split.split:
                 if len(split_node.subjects) != 0:
                     parent_node.child_nodes.append(split_node.node)
+                    split_node.node.split_index = split_feature_index
                     hunts(split_node.node, split_node.subjects, depth + 1, min_samples_leaf, max_depth, criterion, max_features)
 
 

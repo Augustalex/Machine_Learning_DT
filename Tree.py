@@ -73,6 +73,7 @@ class PredictionNode:
     def __init__(self, split_value=None):
         self.split_value = split_value
         self.split_test = None
+        self.split_index = None
         self.label = None
         self.subjects = None
         self.child_nodes = []
@@ -223,7 +224,7 @@ def print_vertical_tree(node, depth, acc, print_instructions=None):
                 acc += '    '
 
     if depth > 0:
-        acc += '├── ' + str(node.split_value)
+        acc += '├── ' + str(node.split_value) + ' : f' + str(node.split_index)
     else:
         acc += 'ROOT'
     if node.subjects is not None:
