@@ -84,16 +84,16 @@ def simple_grid_search(data_set, file_name):
             algorithmResults['RFC'][x - 1].append(a_rfc)
             a_knn = accuracy_test(knn_prediction, test_labels)
             algorithmResults['KNN'][x-1].append(a_knn)
-
+            """
             result_files['ODTC'].at_cell(x - 1, y - 1, a_odtc)
             result_files['ORFC'].at_cell(x - 1, y - 1, a_orfc)
             result_files['DTC'].at_cell(x - 1, y - 1, a_dtc)
             result_files['RFC'].at_cell(x - 1, y - 1, a_rfc)
-            result_files['KNN'].at_cell(x - 1, y - 1, a_knn)
+            result_files['KNN'].at_cell(x - 1, y - 1, a_knn)"""
             print(x, y)
 
-    for algorithm in result_files:
-        result_files[algorithm].to_excel('gridSearchResult' + file_name + algorithm + '.xlsx', sheet_name=algorithm)
+    #for algorithm in result_files:
+        #result_files[algorithm].to_excel('gridSearchResult' + file_name + algorithm + '.xlsx', sheet_name=algorithm)
 
     optimas = {}
     for algorithm in algorithmResults:
@@ -113,7 +113,7 @@ def simple_grid_search(data_set, file_name):
 
     doc = Excelifyer(use_column_headers=False)
     doc.at_row(0, ' ', ['Algorithm', 'Max features', 'Min sample leafs', 'Accuracy'])
-    rowIndex = 1
+    rowIndex = 0
     for optima in optimas:
         arr = [optima, optimas[optima][0], optimas[optima][1], optimas[optima][2]]
         print(arr)
@@ -123,7 +123,7 @@ def simple_grid_search(data_set, file_name):
     doc.to_excel('gridSearchRanking' + file_name + '.xlsx')
 
 
-simple_grid_search(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None), 'hepatitis')
+simple_grid_search(pandas.read_csv(r"..\ILS Projekt Dataset\csv_multi\multi\glass.csv", header=None), 'bajs')
 
 """
 data_set = pandas.np.array(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\balance-scale.csv", header=None))
