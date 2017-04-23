@@ -34,8 +34,8 @@ def simple_grid_search(data_set, file_name):
     algorithmResults['RFC'] = []
     algorithmResults['KNN'] = []
 
-    max_features_step = 1
-    sample_leaf_step = 1
+    max_features_step = 2
+    sample_leaf_step = 5
 
 
     result_files = {}
@@ -45,14 +45,16 @@ def simple_grid_search(data_set, file_name):
     result_files['RFC'] = Excelifyer(use_column_headers=False)
     result_files['KNN'] = Excelifyer(use_column_headers=False)
 
-    for x in range(1, 20):
+    for x in range(1, 10):
         max_features = x * max_features_step
         algorithmResults['ODTC'].append([])
         algorithmResults['ORFC'].append([])
         algorithmResults['DTC'].append([])
         algorithmResults['RFC'].append([])
         algorithmResults['KNN'].append([])
-        for y in range(1, 100):
+        if max_features >= len(train_features[0]):
+            max_features = len(train_features[0]) - 1
+        for y in range(1, 20):
             sample_leaf = y * sample_leaf_step
             odtc = OurDecisionTreeClassifier(max_features=max_features, min_sample_leaf=sample_leaf)
             orfc = OurRandomForrestClassifier(max_features=max_features,min_sample_leaf=sample_leaf, sample_size=0.3, n_estimators=11)
@@ -121,10 +123,10 @@ def simple_grid_search(data_set, file_name):
     doc.to_excel('gridSearchRanking' + file_name + '.xlsx')
 
 
-simple_grid_search(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\labor.csv", header=None), 'labor')
+simple_grid_search(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\balance-scale.csv", header=None), 'balance-scale')
 
 """
-data_set = pandas.np.array(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\hepatitis.csv", header=None))
+data_set = pandas.np.array(pandas.read_csv(r"..\ILS Projekt Dataset\csv_binary\binary\balance-scale.csv", header=None))
 
 features_, labels_ = unzip_features_and_labels(data_set)
 
@@ -135,11 +137,11 @@ train_features, test_features, train_labels, test_labels = \
         random_state=int(round(time.time()))
     )
 # un-numpy the arrays before predicting
-train_features, test_features, train_labels, test_labels = undress_num_py_arrays(
+train_features, test_features, train_labels, test_labels = flatten_num_py_arrays(
     [train_features, test_features, train_labels, test_labels])
 
-hej = OurDecisionTreeClassifier(max_features=4)
-hej2 = OurDecisionTreeClassifier(max_features=2)
+hej = DecisionTreeClassifier(max_features=4)
+hej2 = DecisionTreeClassifier(max_features=2)
 hej2.fit(train_features, train_labels)
 hej.fit(train_features, train_labels)
 p = hej.predict(test_features)
@@ -153,5 +155,6 @@ pp = knn.predict(test_features)
 
 a3 = accuracy_test(pp, test_labels)
 
+print("featurea", len(train_features[0]))
 print(a, a2, a3)
 """
