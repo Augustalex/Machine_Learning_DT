@@ -1,5 +1,7 @@
 from collections import defaultdict, namedtuple
 
+import itertools
+
 
 class Subject:
     """
@@ -182,12 +184,12 @@ def generate_class_frequency_map(subjects):
     return class_frequency
 
 
-def print_tree(tree):
-    output = print_tree_recursive(tree, '')
+def print_horizontal_tree(tree):
+    output = print_tree_recursive_horizontal(tree, '')
     print(output)
 
 
-def print_tree_recursive(tree, acc):
+def print_tree_recursive_horizontal(tree, acc):
     output = ''
     if len(tree.child_nodes) == 0:
         output += '( LEAF: '
@@ -197,35 +199,63 @@ def print_tree_recursive(tree, acc):
 
     for node in tree.child_nodes:
         output += '( ' + str(node.split_value) + ': '
-        output += print_tree_recursive(node, '')
+        output += print_tree_recursive_horizontal(node, '')
         output += ')'
 
     return acc + output
 
-def print_extreme(tree, acc):
-    acc += '└── ' + str(tree.split_value)
-    if len(tree.child_nodes) == 0:
-        acc += '└── '
-        for subject in tree.subjects:
-            acc += '├── ' + subject.get_as_string() + ', '
-        acc += ')'
 
-    for node in tree.child_nodes:
+def print_tree_vertical(tree):
+    # output = print_tree_recursive(tree, '')
+    output = print_vertical_tree(tree, 0, '', [])
+    print(output)
+
+
+def print_vertical_tree(node, depth, acc, print_instructions=None):
+    if len(print_instructions) - 1 < depth:
+        print_instructions.append(True)
+
+    if depth > 0:
+        for index in range(0, depth - 1):
+            if print_instructions[index]:
+                acc += '│   '
+            else:
+                acc += '    '
+
+    if depth > 0:
         acc += '├── ' + str(node.split_value)
-        acc += print_tree_recursive(node, acc)
-        acc += ')'
+    else:
+        acc += 'ROOT'
+    if node.subjects is not None:
+        frequencies = generate_class_frequency_map(node.subjects)
+        index = 0
+        for subject in frequencies:
+            acc += '\n'
+            acc += print_frequency(subject, frequencies[subject], depth + 1, '', print_instructions)
+            index += 1
+            if index == len(frequencies):
+                print_instructions[depth] = False
 
-class PrintTree:
+    else:
+        index = 0
+        for child_node in node.child_nodes:
+            print_instructions[depth] = True
+            acc += '\n'
+            if index == len(node.child_nodes) - 1:
+                print_instructions[depth] = False
+            acc += print_vertical_tree(child_node, depth + 1, '', print_instructions)
+            index += 1
 
-    def __init__(self, depth, node):
-        self.underlings = PrintTree.count_underlings(node)
-        self.depth = 0
+    return acc
 
-    @staticmethod
-    def count_underlings(node):
-        count = len(node.child_nodes)
 
-        for child in node.child_nodes:
-            count += PrintTree.count_underlings(child)
+def print_frequency(subject_value, frequency, depth, acc, print_instructions=None):
+    if depth > 0:
+        for index in range(0, depth - 1):
+            if print_instructions[index]:
+                acc += '│   '
+            else:
+                acc += '    '
 
-        return count
+    acc += '├── ' + subject_value + ': ' + str(frequency)
+    return acc

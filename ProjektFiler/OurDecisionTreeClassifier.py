@@ -8,7 +8,7 @@ from collections import defaultdict
 from scipy._lib.six import xrange
 
 from hunts_algorithm import start_hunts, hunts
-from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject, print_tree
+from Tree import predict, PredictionNode, get_classes_for_subject, compare_results, Subject, print_tree_vertical
 from sklearn.model_selection import train_test_split
 
 
@@ -61,7 +61,7 @@ class OurRandomForrestClassifier:
         self.estimators = []
 
     """
-        Our random-forest fit function recieves training data and if bagging is true: loops through
+        Our random-forest fit function receives training data and if bagging is true: loops through
         all the estimators and inserts random samples until (sample size * total rows) is
         reached. When the sample data for a estimator is filled we create a decision tree
         classifier and fit the tree to that data and add it to our estimators list for predictions
@@ -101,14 +101,14 @@ class OurRandomForrestClassifier:
         nominees = []
         for i in range(0, len(test_features)):
             castVotes = [prediction_set[i] for prediction_set in predictions]
-            nominees.append(nominate(castVotes))
+            nominees.append(nominate_index(castVotes))
 
         return nominees
 
 
-def nominate(votes):
+def nominate_index(votes_by_index):
     count = defaultdict(int)
-    for vote in votes:
+    for vote in votes_by_index:
         if type(vote) == numpy.ndarray:
             vote = vote[0]
 
@@ -146,10 +146,9 @@ def run():
         )
 
     dtc.fit(train_features, train_labels)
-    print_tree(dtc.model)
+    print_tree_vertical(dtc.model)
     # for l in map(lambda x: x, test_prediction):
     #     print(l)
-    """ FORTFARANDE FEL RESULTAT!!! """
 
 
 
